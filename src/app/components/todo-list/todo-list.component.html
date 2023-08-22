@@ -1,0 +1,56 @@
+<div class="layout">
+  <header class="header">
+      <div class="date">{{todaysDate | date:'longDate'}}</div>
+      <div class="status" >{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
+      <div class="divider"></div>
+  </header>
+  <div class="todos">
+    <div class="incomplete-todos">
+      <div class="todo-label">Incomplete</div>
+      <div class="todo-items">
+        <div class="todoIncomplete">
+          <div class="todo-container" *ngFor="let item of incompleteTasks; index as i">
+            <!-- <div class="checkbox"></div> -->
+            <label class="container">
+              <input id="todoIncomplete" type="checkbox" [checked]="item.checked" (click)="onComplete(item, i)">
+              <span class="checkmark"></span>
+            </label>
+            <div class="todo-item">
+              <div class="todo-item-label">{{item.name}}</div>
+              <div class="todo-category-label">{{item.category}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="completed-todos">
+      <div class="todo-label">Completed</div>
+      <div class="todo-items">
+        <div class="todoIncomplete">
+          <div class="todo-container" *ngFor="let item of completedTasks">
+            <label class="container">
+              <input id="todoComplete" type="checkbox" [checked]="item.checked">
+              <span class="checkmark"></span>
+            </label>
+            <div class="todo-item">
+              <div class="todo-item-label todo-item-label_completed">{{item.name}}</div>
+              <!-- <div class="todo-category-label">{{item.category}}</div> -->
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- <mat-card>
+  <mat-card-header>
+    <mat-card-title>Todo App</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item *ngFor="let task of tasks">
+        <mat-checkbox>{{ task }}</mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card> -->

@@ -1,0 +1,203 @@
+.layout {
+  padding: 5%;
+}
+
+.header {
+  width: 100%;
+  height: 82px;
+  padding-top: 32px;
+  position: relative
+}
+
+.date {
+  position: absolute;
+  color: #0E0E11;
+  font-size: 32px;
+  font-family: Inter;
+  font-weight: 700;
+  word-wrap: break-word
+}
+
+.status {
+  margin-top: 47px;
+  position: absolute;
+  color: #575767;
+  font-size: 14px;
+  font-family: Inter;
+  font-weight: 600;
+  word-wrap: break-word
+}
+
+.divider {
+  width: 2px;
+  height: 343px;
+  margin-top: 82px;
+  position: absolute;
+  transform: rotate(-90deg);
+  transform-origin: 0 0;
+  opacity: 0.20;
+  background: #D0D0D0;
+  border-radius: 100px
+}
+
+.todos {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  margin: 16px;
+}
+
+.completed-todos {
+  height: auto;
+  width: auto;
+}
+
+.incomplete-todos {
+  height: auto;
+  width: auto;
+}
+
+.todo-label {
+  color: #575767;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 18px;
+  /* 100% */
+}
+
+.todo-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  padding-top: 16px;
+}
+
+.todoIncomplete {
+  width: 340px;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16px;
+  display: inline-flex
+}
+
+.todo-container {
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16px;
+  display: inline-flex
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  background: linear-gradient(180deg, #FCFCFC 0%, #F8F8F8 100%);
+  border-radius: 6px;
+  border: 1px #DADADA solid
+}
+
+.todo-item {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  display: inline-flex
+}
+
+.todo-item-label {
+  &_completed{
+    color: #B9B9BE;
+  }
+  width: 300px;
+  color: #575767;
+  font-size: 18px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 24px;
+  word-wrap: break-word
+}
+
+.todo-category-label {
+  color: #B9B9BE;
+  font-size: 14px;
+  font-family: Inter;
+  font-weight: 600;
+  word-wrap: break-word
+}
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background: linear-gradient(180deg, #FCFCFC 0%, #F8F8F8 100%);
+  border-radius: 6px;
+  border: 1px #DADADA solid;
+}
+
+/* On mouse-over, add a grey background color */
+// .container:hover input ~ .checkmark {
+//   background: #B9B9BE;
+// }
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background: white;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid #575767;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
