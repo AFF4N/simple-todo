@@ -1,4 +1,13 @@
-# TodoApp
+# Simple Todo App
+a simple todo app | built using angular 16  | design by @joey on figma
+
+![ToDo](https://github.com/AFF4N/simple-todo/assets/99970411/e98b25ca-d254-40b6-ad7b-d56c5247a2fb)
+
+## Technologies
+frontend:
+- Angular v16 
+- Bootstrap CSS (utility styles)
+- Angular Material (UI components)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
 
