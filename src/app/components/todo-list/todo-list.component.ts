@@ -1,75 +1,51 @@
 import { Component, OnInit } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { Task } from 'src/app/models/task.model';
+import { AddTodoComponent } from '../add-todo/add-todo.component';
+import { ArchivedComponent } from '../archived/archived.component';
+import { SettingsComponent } from '../settings/settings.component';
+import { AboutComponent } from '../about/about.component';
+import { TodoService } from 'src/app/services/todo.service';
 
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.scss']
+  styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements OnInit {
-
   todaysDate = new Date();
-  completedTasks = [
-    {
-      name:'Completed task 1',
-      category: '💰 Finance',
-      checked: true
-    },
-    {
-      name:'Completed task 2',
-      category: '💰 Finance',
-      checked: true
-    },
-    {
-      name:'Completed task 3',
-      category: '💰 Finance',
-      checked: true
-    },
-  ];
-  incompleteTasks = [
-    {
-      name:'Incomplete task 1',
-      category: '💰 Finance',
-      checked: false
-    },
-    {
-      name:'Incomplete task 2',
-      category: '💰 Finance',
-      checked: false
-    },
-    {
-      name:'Incomplete task 3',
-      category: '💰 Finance',
-      checked: false
-    },
-    {
-      name:'Incomplete task 4',
-      category: '💰 Finance',
-      checked: false
-    },
-  ];
+  isChecked: boolean = false;
 
-  constructor() { }
+  allTasks: Task[] = [];
+  completedTasks: Task[] = [];
+  incompleteTasks: Task[] = [];
+
+  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService) {}
 
   ngOnInit() {
-    console.log(this.incompleteTasks);
-    console.log(this.completedTasks);
+    this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
+    this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
+    this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
+    console.log(this.allTasks)
   }
 
-  onComplete(item: any, index: any){
-    console.log(item);
-    console.log(index);
-
-    console.log(this.incompleteTasks);
-    console.log(this.completedTasks);
-
-    item.checked = !item.checked;
-    setTimeout(() => {
-      this.incompleteTasks.splice(item);
-      console.log(this.incompleteTasks);
-      this.completedTasks.push(item)
-      console.log(this.completedTasks);
-    }, 1500);
-
+  toggleTaskStatus(task: Task) {
+    this.todoService.toggleTaskStatus(task);
   }
 
+  AddNewTask(){
+    this.bottomSheet.open(AddTodoComponent);
+  }
+
+  openArchives() {
+    this.bottomSheet.open(ArchivedComponent);
+  }
+
+  openSettings() {
+    this.bottomSheet.open(SettingsComponent);
+  }
+
+  openAbout() {
+    this.bottomSheet.open(AboutComponent);
+  }
 }

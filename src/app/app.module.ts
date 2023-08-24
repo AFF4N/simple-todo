@@ -7,6 +7,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
 import { MaterialModule } from 'src/material.module';
 import { AddTodoComponent } from './components/add-todo/add-todo.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,11 @@ import { AddTodoComponent } from './components/add-todo/add-todo.component';
     BrowserModule,
     AppRoutingModule,
     MaterialModule,
-    BrowserAnimationsModule
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    PickerComponent,
+    EmojiModule
   ],
   providers: [],
   bootstrap: [AppComponent]
