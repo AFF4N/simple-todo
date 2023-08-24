@@ -1,0 +1,64 @@
+
+.sheet-layout {
+  width: 100%;
+  margin-left: auto;
+  box-sizing: border-box;
+  margin-right: auto;
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.heading {
+  margin: 0px 0px 0.35em;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+  font-weight: 700;
+}
+
+.sub-heading {
+  margin: 0px;
+  margin-bottom: 2rem;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.6);
+  max-width: 360px;
+  line-height: 1.43;
+}
+
+@media (min-width: 600px) {
+  .sheet-layout {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 600px) {
+  .sheet-layout {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0em;
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+  color: rgb(68, 0, 166) !important;
+  /* color: red!important; */
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  color: rgb(68, 0, 166) !important;
+  /* color: green!important; */
+}
+
+

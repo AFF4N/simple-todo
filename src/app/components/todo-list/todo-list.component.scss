@@ -3,6 +3,8 @@
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 82px;
   padding-top: 32px;
@@ -30,7 +32,7 @@
 
 .divider {
   width: 2px;
-  height: 343px;
+  height: 90vw;
   margin-top: 82px;
   position: absolute;
   transform: rotate(-90deg);
@@ -65,7 +67,6 @@
   font-style: normal;
   font-weight: 700;
   line-height: 18px;
-  /* 100% */
 }
 
 .todo-items {
@@ -130,6 +131,22 @@
   font-family: Inter;
   font-weight: 600;
   word-wrap: break-word
+}
+
+.add-btn{
+  position: fixed;
+  right: 16px;
+  bottom: 40px;
+}
+
+.menu-icon{
+  position: fixed;
+  cursor: pointer;
+  right: 36px;
+}
+
+.icons{
+  color: #0000008a !important;
 }
 
 /* The container */
@@ -200,4 +217,11 @@
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+
+@media(min-width: 768px){
+  .menu-icon{
+    position: fixed;
+    right: 24px;
+  }
 }

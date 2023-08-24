@@ -1,26 +1,43 @@
-<div class="ComponentsAddTask" style="width: 56px; height: 56px; position: relative">
-  <div class="Ellipse1" style="width: 56px; height: 56px; left: 0px; top: 0px; position: absolute; background: linear-gradient(180deg, #3F4EA0 0%, #473FA0 100%); box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25); border-radius: 9999px; border: 1px #515CC6 solid"></div>
-  <div class="Vector" style="width: 20px; height: 20px; left: 18px; top: 18px; position: absolute; border: 1px white solid"></div>
+
+<div class="contact-form">
+  <form [formGroup]="todoForm">
+    <div class="contact-form-fields">
+      <div class="form-header">
+        <h5 class="heading-form">What tasks we got today? 🤔
+        </h5>
+        <p class="MuiTypography-root MuiTypography-body1 css-1ymvkef heading-desc">Add a dash of productivity to your day
+        </p>
+      </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Task</mat-label>
+          <input matInput  placeholder="Task" type="text" name="task" formControlName="name">
+        </mat-form-field>
+
+        <span style="display: flex; gap: 10px;">
+          <div class="emojis">
+            <button class="emoji-btn" mat-button (click)="toggleElement()">
+              <ngx-emoji [isNative]="true" style="height: 24px;display: flex;" [emoji]="selectedEmoji? selectedEmoji: 'smile'"></ngx-emoji>
+            </button>
+          </div>
+          <emoji-mart
+            [showPreview]="false"
+            [isNative]="true"
+            [darkMode]="false"
+            color="#4249a0"
+            class="emoji-popup"
+            *ngIf="emojiPopup"
+            (emojiSelect)="select($event)"
+            ></emoji-mart>
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Category</mat-label>
+            <input matInput placeholder="Category" type="text" name="category" formControlName="category">
+          </mat-form-field>
+        </span>
+
+        <input type="hidden" name="_gotcha" style="display:none !important">
+      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">Add Task
+        <span class="mui-span"></span>
+      </button>
+    </div>
+  </form>
 </div>
-<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
-  <g filter="url(#filter0_d_37_933)">
-    <circle cx="36" cy="34" r="28" fill="url(#paint0_linear_37_933)"/>
-    <circle cx="36" cy="34" r="27" stroke="#515CC6" stroke-width="2"/>
-  </g>
-  <path d="M36 24V44M26 34H46" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="bevel"/>
-  <defs>
-    <filter id="filter0_d_37_933" x="0" y="0" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-      <feOffset dy="2"/>
-      <feGaussianBlur stdDeviation="4"/>
-      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
-      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_37_933"/>
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_37_933" result="shape"/>
-    </filter>
-    <linearGradient id="paint0_linear_37_933" x1="36" y1="6" x2="36" y2="62" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3F4EA0"/>
-      <stop offset="1" stop-color="#473FA0"/>
-    </linearGradient>
-  </defs>
-</svg>
