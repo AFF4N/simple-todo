@@ -29,10 +29,13 @@ export class TodoService {
       this.allTasksSubject.next(this.allTasks);
       this.completedTasksSubject.next(this.completedTasks);
       this.incompleteTasksSubject.next(this.incompleteTasks);
-    } else {
-      localStorage.setItem('tasks', JSON.stringify([{name: 'Click on + to add your first task', category: 'Fantisitic start', emoji: '😎', checked: false}]));
-      this.loadTasksFromLocalStorage();
     }
+    // else {
+    //   localStorage.setItem('tasks', JSON.stringify([
+    //     {name: 'Click on + to add your first task', category: 'Fantastic start', emoji: '😎', checked: false}
+    //   ]));
+    //   this.loadTasksFromLocalStorage();
+    // }
   }
 
   saveTasksToLocalStorage() {

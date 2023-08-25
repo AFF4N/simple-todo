@@ -47,18 +47,4 @@
   }
 }
 
-::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 0em;
-}
-
-::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
-  color: rgb(68, 0, 166) !important;
-  /* color: red!important; */
-}
-
-::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
-  color: rgb(68, 0, 166) !important;
-  /* color: green!important; */
-}
-
 

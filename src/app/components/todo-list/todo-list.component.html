@@ -1,6 +1,6 @@
 <div class="layout">
   <header class="header">
-      <div>
+      <div style="width: 100%;">
         <div class="date">{{todaysDate | date:'longDate'}}</div>
         <div class="status" >{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
       </div>
@@ -38,6 +38,11 @@
               <div class="todo-category-label">{{task.emoji +' '+ task.category}}</div>
             </div>
           </div>
+          <div *ngIf="incompleteTasks.length === 0">
+            <div class="todo-item">
+              <div class="todo-item-label todo-item-label_completed">Click on + to add a task</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -52,6 +57,11 @@
             </label>
             <div class="todo-item">
               <div class="todo-item-label todo-item-label_completed">{{task.name}}</div>
+            </div>
+            <div *ngIf="completedTasks.length === 0">
+              <div class="todo-item">
+                <div class="todo-item-label todo-item-label_completed">Mark the task done to get it completed</div>
+              </div>
             </div>
           </div>
         </div>

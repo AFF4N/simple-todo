@@ -132,7 +132,8 @@
   /* color: green!important; */
 }
 
-.mat-bottom-sheet-container {
+::ng-deep .mat-bottom-sheet-container {
   min-width: 100vw !important;
+  overflow-x: hidden !important;
 }
 

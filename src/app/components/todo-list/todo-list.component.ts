@@ -26,7 +26,7 @@ export class TodoListComponent implements OnInit {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
     this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
     this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
-    console.log(this.allTasks)
+    // console.log(this.allTasks)
   }
 
   toggleTaskStatus(task: Task) {
