@@ -10,12 +10,18 @@ import { AddTodoComponent } from './components/add-todo/add-todo.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { ArchivedComponent } from './components/archived/archived.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { AboutComponent } from './components/about/about.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TodoListComponent,
-    AddTodoComponent
+    AddTodoComponent,
+    ArchivedComponent,
+    SettingsComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,

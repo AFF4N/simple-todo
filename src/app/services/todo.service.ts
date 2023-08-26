@@ -11,10 +11,12 @@ export class TodoService {
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
+  archivedTasks: Task[] = []
 
   allTasksSubject = new BehaviorSubject<Task[]>(this.allTasks);
   completedTasksSubject = new BehaviorSubject<Task[]>(this.completedTasks);
   incompleteTasksSubject = new BehaviorSubject<Task[]>(this.incompleteTasks);
+  archivedTasksSubject = new BehaviorSubject<Task[]>(this.archivedTasks);
 
   constructor() {
     this.loadTasksFromLocalStorage();
@@ -22,13 +24,17 @@ export class TodoService {
 
   loadTasksFromLocalStorage() {
     const tasksData = localStorage.getItem('tasks');
+    let date = new Date();
+    date.setHours(0, 0, 0, 0); // Set time to start of the day
     if (tasksData) {
       this.allTasks = [...JSON.parse(tasksData)];
       this.completedTasks = this.allTasks.filter((task) => task.checked);
       this.incompleteTasks = this.allTasks.filter((task) => !task.checked);
+      this.archivedTasks = this.allTasks.filter((task) => new Date(task.dateCreated) <= date);
       this.allTasksSubject.next(this.allTasks);
       this.completedTasksSubject.next(this.completedTasks);
       this.incompleteTasksSubject.next(this.incompleteTasks);
+      this.archivedTasksSubject.next(this.archivedTasks);
     }
     // else {
     //   localStorage.setItem('tasks', JSON.stringify([
@@ -57,8 +63,10 @@ export class TodoService {
   updateStatusArrays() {
     this.completedTasks = this.allTasks.filter(task => task.checked);
     this.incompleteTasks = this.allTasks.filter(task => !task.checked);
+    this.archivedTasks = this.allTasks.filter((task) => task.dateCreated < new Date());
     this.completedTasksSubject.next(this.completedTasks);
     this.incompleteTasksSubject.next(this.incompleteTasks);
+    this.archivedTasksSubject.next(this.archivedTasks);
     this.allTasksSubject.next(this.allTasks);
   }
 

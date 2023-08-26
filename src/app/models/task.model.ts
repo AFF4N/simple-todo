@@ -5,4 +5,5 @@ export class Task {
   checked: boolean = false;
   // status: string = '';
   emoji: string = '';
+  dateCreated: Date = new Date();
 }

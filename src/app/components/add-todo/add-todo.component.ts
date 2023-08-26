@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { TodoService } from 'src/app/services/todo.service';
@@ -13,7 +13,7 @@ export class AddTodoComponent implements OnInit {
   todoForm: any;
   allTasks: any = [];
 
-  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private elementRef: ElementRef, private todoService: TodoService) {}
+  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService) {}
 
   ngOnInit() {
     this.todoForm = this.fb.group({
@@ -27,13 +27,6 @@ export class AddTodoComponent implements OnInit {
       this.allTasks = [JSON.parse(tasksData)];
     }
   }
-
-  // @HostListener('document:click', ['$event'])
-  // onClick(event: Event) {
-  //   if (!this.elementRef.nativeElement.contains(event.target)) {
-  //     this.emojiPopup = false;
-  //   }
-  // }
 
   toggleElement() {
     this.emojiPopup = !this.emojiPopup;
@@ -80,21 +73,17 @@ export class AddTodoComponent implements OnInit {
 
   onSubmit() {
     if(this.selectedEmoji){
-      this.todoForm.patchValue(
-          {emoji: this.selectedEmoji.native, checked: false}
-        );
-      // const todo = {
-      //   name: this.todoForm.value.name,
-      //   category: this.todoForm.value.category,
-      //   emoji: this.selectedEmoji.native,
-      //   checked: false,
-      // }
-      // console.log(todo);
-      // this.allTasks.push(this.todoForm.value)
-      // localStorage.setItem('tasks', JSON.stringify(this.todoForm.value));
-      this.todoService.addTask(this.todoForm.value);
+      const todo = {
+        name: this.todoForm.value.name,
+        category: this.todoForm.value.category,
+        emoji: this.selectedEmoji.native,
+        checked: false,
+        dateCreated: new Date()
+        // dateCreated: new Date('23-08-23')
+      }
+      console.log(todo);
+      this.todoService.addTask(todo);
       this.addNewSheet.dismiss();
     }
-    // window.location.reload();
   }
 }

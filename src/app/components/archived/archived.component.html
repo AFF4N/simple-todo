@@ -1,13 +1,35 @@
 
 <div class="sheet-layout">
   <div class="header">
-    <div style="margin-top: 2rem; margin-bottom: 2rem;">
+    <div style="margin-top: 1rem; margin-bottom: 1rem;">
       <h5 class="heading">Archive 📥</h5>
       <p class="sub-heading">Manage your archived tasks</p>
       <section class="content">
-        <p>
-          archived works!
-        </p>
+        <div>
+          <div class="date-label">25 August 2023</div>
+          <div class="archived-todos">
+            <div class="archived-items">
+              <div class="todoIncomplete">
+                <div class="todo-container" *ngFor="let task of archivedTasks; index as i">
+                  <!-- <label class="container">
+                    <input id="todoIncomplete" type="checkbox" [checked]="task.checked">
+                    <span class="checkmark"></span>
+                  </label> -->
+                  <div class="todo-item">
+                    <div class="todo-item-label">{{task.name}}</div>
+                    <div class="todo-category-label">{{task.emoji +' '+ task.category}}</div>
+                    <div class="divider"></div>
+                  </div>
+                </div>
+                <div *ngIf="archivedTasks.length === 0">
+                  <div class="todo-item">
+                    <div class="todo-item-label todo-item-label_completed">Click on + to add a task</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </div>
