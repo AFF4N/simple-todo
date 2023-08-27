@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { TodoService } from 'src/app/services/todo.service';
 @Component({
@@ -16,12 +16,18 @@ export class AddTodoComponent implements OnInit {
   constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService) {}
 
   ngOnInit() {
-    this.todoForm = this.fb.group({
-      name: [''],
-      category: [''],
-      emoji: [''],
-      checked: []
-    });
+    this.todoForm = new FormGroup({
+      name: new FormControl(),
+      category: new FormControl(),
+      emoji: new FormControl('✨'),
+      checked: new FormControl()
+    })
+    // this.todoForm = this.fb.group({
+    //   name: [''],
+    //   category: [''],
+    //   emoji: [''],
+    //   checked: []
+    // });
     const tasksData = localStorage.getItem('tasks');
     if (tasksData) {
       this.allTasks = [JSON.parse(tasksData)];
@@ -78,8 +84,8 @@ export class AddTodoComponent implements OnInit {
         category: this.todoForm.value.category,
         emoji: this.selectedEmoji.native,
         checked: false,
-        dateCreated: new Date()
-        // dateCreated: new Date('23-08-23')
+        dateCreated: new Date().toDateString()
+        // dateCreated: 'Sun Aug 25 2023'
       }
       console.log(todo);
       this.todoService.addTask(todo);

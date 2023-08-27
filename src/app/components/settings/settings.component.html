@@ -4,9 +4,24 @@
       <h5 class="heading">Settings ⚙️</h5>
       <p class="sub-heading">Tailor your experience</p>
       <section class="content">
-        <p>
-          settings works!
-        </p>
+        <div class="container">
+          <div class="setting"
+          style="
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            ">
+            <div style="width: 100%;">
+              <div class="title">Select Theme</div>
+              <div class="description">change app theme</div>
+            </div>
+            <mat-slide-toggle [(ngModel)]="toggleTheme" (change)="onChange($event)"></mat-slide-toggle>
+          </div>
+          <div class="setting">
+            <div class="title">Danger Zone</div>
+            <button mat-button class="btn-danger" (click)="onDelete()">Delete all tasks</button>
+          </div>
+        </div>
       </section>
     </div>
   </div>

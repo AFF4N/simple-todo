@@ -5,5 +5,10 @@ export class Task {
   checked: boolean = false;
   // status: string = '';
   emoji: string = '';
-  dateCreated: Date = new Date();
+  // dateCreated: Date = new Date();
+  dateCreated: string = '';
+}
+
+export class GroupedTasks {
+  [date: string]: Task[]; // Change `any[]` to the type of your task objects
 }

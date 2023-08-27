@@ -25,16 +25,18 @@ export class TodoService {
   loadTasksFromLocalStorage() {
     const tasksData = localStorage.getItem('tasks');
     let date = new Date();
-    date.setHours(0, 0, 0, 0); // Set time to start of the day
+    date.setHours(0, 0, 0, 0);
     if (tasksData) {
       this.allTasks = [...JSON.parse(tasksData)];
       this.completedTasks = this.allTasks.filter((task) => task.checked);
       this.incompleteTasks = this.allTasks.filter((task) => !task.checked);
-      this.archivedTasks = this.allTasks.filter((task) => new Date(task.dateCreated) <= date);
-      this.allTasksSubject.next(this.allTasks);
+      this.archivedTasks = this.allTasks.filter(
+        (task) => new Date(task.dateCreated) < new Date(date));
+      console.log(this.archivedTasks);
       this.completedTasksSubject.next(this.completedTasks);
       this.incompleteTasksSubject.next(this.incompleteTasks);
       this.archivedTasksSubject.next(this.archivedTasks);
+      this.allTasksSubject.next(this.allTasks);
     }
     // else {
     //   localStorage.setItem('tasks', JSON.stringify([
@@ -46,6 +48,11 @@ export class TodoService {
 
   saveTasksToLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(this.allTasks));
+  }
+
+  deleteAllTasksfromLocalStorage() {
+    localStorage.setItem('tasks', JSON.stringify(''));
+    location. reload()
   }
 
   addTask(task: Task) {
@@ -61,9 +68,13 @@ export class TodoService {
   }
 
   updateStatusArrays() {
+    let date = new Date();
+    date.setHours(0, 0, 0, 0);
     this.completedTasks = this.allTasks.filter(task => task.checked);
     this.incompleteTasks = this.allTasks.filter(task => !task.checked);
-    this.archivedTasks = this.allTasks.filter((task) => task.dateCreated < new Date());
+    this.archivedTasks = this.allTasks.filter((
+      task) => new Date(task.dateCreated) < new Date(date));
+    console.log(this.archivedTasks);
     this.completedTasksSubject.next(this.completedTasks);
     this.incompleteTasksSubject.next(this.incompleteTasks);
     this.archivedTasksSubject.next(this.archivedTasks);
