@@ -15,8 +15,13 @@
               <div class="title">Select Theme</div>
               <div class="description">change app theme</div>
             </div>
-            <mat-slide-toggle [(ngModel)]="toggleTheme" (change)="onChange($event)"></mat-slide-toggle>
-          </div>
+            <!-- <mat-slide-toggle [(ngModel)]="toggleTheme" (change)="onChange($event)"></mat-slide-toggle> -->
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="toggleTheme" (change)="onChange($event)">
+              <span class="slider"></span>
+          </label>
+        </div>
+        <div class="divider"></div>
           <div class="setting">
             <div class="title">Danger Zone</div>
             <button mat-button class="btn-danger" (click)="onDelete()">Delete all tasks</button>

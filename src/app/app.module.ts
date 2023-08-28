@@ -13,6 +13,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ArchivedComponent } from './components/archived/archived.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { AboutComponent } from './components/about/about.component';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AboutComponent } from './components/about/about.component';
     AddTodoComponent,
     ArchivedComponent,
     SettingsComponent,
-    AboutComponent
+    AboutComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
