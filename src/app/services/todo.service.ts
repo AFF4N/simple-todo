@@ -81,5 +81,9 @@ export class TodoService {
     this.allTasksSubject.next(this.allTasks);
   }
 
+  toggleDarkMode(darkMode:boolean) {
+    localStorage.setItem("DarkMode", JSON.stringify(darkMode));
+    document.body.classList.toggle('dark-mode', darkMode);
+  }
 }
 

@@ -1,16 +1,16 @@
 
-<div class="contact-form">
+<div class="todo-form">
   <form [formGroup]="todoForm">
-    <div class="contact-form-fields">
+    <div class="todo-form-fields">
       <div class="form-header">
         <h5 class="heading-form">What tasks we got today? 🤔
         </h5>
         <p class="MuiTypography-root MuiTypography-body1 css-1ymvkef heading-desc">Add a dash of productivity to your day
         </p>
       </div>
-        <mat-form-field appearance="outline">
+        <mat-form-field color="primary" appearance="outline">
           <mat-label>Task</mat-label>
-          <input matInput  placeholder="Task" type="text" name="task" formControlName="name">
+          <input matInput  placeholder="Task" type="text" formControlName="name">
         </mat-form-field>
 
         <span style="display: flex; gap: 10px;">
@@ -22,15 +22,15 @@
           <emoji-mart
             [showPreview]="false"
             [isNative]="true"
-            [darkMode]="false"
+            [darkMode]="darkMode"
             color="#4249a0"
             class="emoji-popup"
             *ngIf="emojiPopup"
             (emojiSelect)="select($event)"
             ></emoji-mart>
-          <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-form-field appearance="outline" color="primary" style="width: 100%;">
             <mat-label>Category</mat-label>
-            <input matInput placeholder="Category" type="text" name="category" formControlName="category">
+            <input matInput placeholder="Category" type="text" formControlName="category">
           </mat-form-field>
         </span>
 

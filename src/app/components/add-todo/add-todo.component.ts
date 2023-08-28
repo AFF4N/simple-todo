@@ -5,13 +5,14 @@ import { TodoService } from 'src/app/services/todo.service';
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
-  styleUrls: ['./add-todo.component.css'],
+  styleUrls: ['./add-todo.component.scss'],
 })
 export class AddTodoComponent implements OnInit {
   selectedEmoji: any;
   emojiPopup = false;
   todoForm: any;
   allTasks: any = [];
+  darkMode: any;
 
   constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService) {}
 
@@ -36,6 +37,8 @@ export class AddTodoComponent implements OnInit {
 
   toggleElement() {
     this.emojiPopup = !this.emojiPopup;
+    const theme:any = localStorage.getItem('DarkMode');
+    this.darkMode = JSON.parse(theme);
   }
 
   select($event: { emoji: any }) {

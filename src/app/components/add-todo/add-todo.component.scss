@@ -1,4 +1,4 @@
-.contact-form {
+.todo-form {
   width: 100%;
   margin-left: auto;
   box-sizing: border-box;
@@ -8,7 +8,7 @@
   padding-right: 16px;
 }
 
-.contact-form-fields {
+.todo-form-fields {
   margin-top: 2rem;
   margin-bottom: 2rem;
   gap: 1rem;
@@ -100,13 +100,13 @@
 }
 
 @media (min-width: 600px) {
-  .contact-form {
+  .todo-form {
     max-width: 600px;
   }
 }
 
 @media (min-width: 600px) {
-  .contact-form {
+  .todo-form {
     padding-left: 24px;
     padding-right: 24px;
   }
@@ -124,12 +124,10 @@
 
 ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
   color: rgb(68, 0, 166) !important;
-  /* color: red!important; */
 }
 
 ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
   color: rgb(68, 0, 166) !important;
-  /* color: green!important; */
 }
 
 ::ng-deep .mat-bottom-sheet-container {

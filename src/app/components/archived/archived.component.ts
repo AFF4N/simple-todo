@@ -5,7 +5,7 @@ import { TodoService } from 'src/app/services/todo.service';
 @Component({
   selector: 'app-archived',
   templateUrl: './archived.component.html',
-  styleUrls: ['./archived.component.css']
+  styleUrls: ['./archived.component.scss']
 })
 
 export class ArchivedComponent implements OnInit {

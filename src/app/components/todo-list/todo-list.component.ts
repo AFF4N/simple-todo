@@ -26,7 +26,10 @@ export class TodoListComponent implements OnInit {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
     this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
     this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
-    // console.log(this.allTasks)
+    let darkMode = localStorage.getItem("DarkMode");
+    if( darkMode === 'true'){
+      this.todoService.toggleDarkMode(true);
+    }
   }
 
   toggleTaskStatus(task: Task) {

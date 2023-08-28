@@ -4,7 +4,7 @@
       <h5 class="heading">Settings ⚙️</h5>
       <p class="sub-heading">Tailor your experience</p>
       <section class="content">
-        <div class="container">
+        <div class="settings-panel">
           <div class="setting"
           style="
               display: flex;
@@ -12,18 +12,18 @@
               align-items: center;
             ">
             <div style="width: 100%;">
-              <div class="title">Select Theme</div>
-              <div class="description">change app theme</div>
+              <div class="settings-title">Select Theme</div>
+              <div class="settings-description">change app theme</div>
             </div>
             <!-- <mat-slide-toggle [(ngModel)]="toggleTheme" (change)="onChange($event)"></mat-slide-toggle> -->
             <label class="switch">
-              <input type="checkbox" [(ngModel)]="toggleTheme" (change)="onChange($event)">
+              <input type="checkbox" [(ngModel)]="darkMode" (change)="onChange($event)">
               <span class="slider"></span>
           </label>
         </div>
         <div class="divider"></div>
           <div class="setting">
-            <div class="title">Danger Zone</div>
+            <div class="settings-title">Danger Zone</div>
             <button mat-button class="btn-danger" (click)="onDelete()">Delete all tasks</button>
           </div>
         </div>

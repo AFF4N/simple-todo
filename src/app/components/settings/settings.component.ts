@@ -6,25 +6,31 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
 
-  toggleTheme: any;
+  darkMode:any;
 
   constructor(private todoService: TodoService, private dialog: MatDialog) { }
 
   ngOnInit() {
+    let darkMode = localStorage.getItem("DarkMode");
+    if( darkMode === 'true'){
+      this.darkMode = true;
+    }
   }
 
   onChange(event: any) {
-    console.log(event.target.checked)
+    let toggle = event.target.checked;
+    this.todoService.toggleDarkMode(toggle);
   }
 
   onDelete(){
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
       width: '420px',
-      autoFocus: false
+      autoFocus: false,
+      restoreFocus: false
     })
     confirmDialog.afterClosed().subscribe(result => {
       if(result === true) {

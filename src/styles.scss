@@ -2,6 +2,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 @import '@ctrl/ngx-emoji-mart/picker';
+@import "variables.scss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 // Plus imports for other components in your app.
 
@@ -76,4 +77,119 @@ a {
   outline: 0;
   overflow: auto;
   border-radius: 10px 10px 0px 0px;
+}
+
+.mat-mdc-menu-panel{
+  border-radius: 10px !important;
+}
+
+/* =========== DARK MODE SETTINGS =========== */
+body.dark-mode {
+  background-color: $color-bg-darkmode;
+  color: $color-primary-darkmode;
+
+  .mat-bottom-sheet-container {
+    background-color: rgb(24, 24, 24);
+  }
+
+  .mat-mdc-menu-content{
+    background-color: #2c2c2d;
+  }
+
+  .mat-mdc-menu-item-text, .mat-icon{
+    color: rgb(255 255 255 / 54%) !important;
+  }
+
+  h3, h4, h5, h6, a {
+    color: white !important;
+  }
+
+  .divider{
+    background: #575767;
+    border-bottom: #575767;
+  }
+
+  .heading-desc{
+    color: #979797;
+  }
+
+  // .mat-form-field-outline {
+  //   color: #a1a1a6 !important;
+  // }
+  // .mat-form-field-label {
+  //   color: #a1a1a6 !important;
+  // }
+  // input.mat-input-element {
+  //   color: #a1a1a6 !important;
+  // }
+  // .mat-form-field-appearance-outline {
+  //   color: rgb(163, 152, 120) !important;
+  // }
+  // .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+  //   color: rgb(163, 152, 120) !important;
+  // }
+  // .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  //   color: rgb(163, 152, 120) !important;
+  // }
+  .emoji-btn{
+    &:hover{
+      border-color: #2C2C2D;
+    }
+    background: transparent;
+    border-color: #424242;;
+  }
+  .submit-btn{
+    background-color: rgb(245, 245, 247);
+    color: rgb(22, 22, 22);
+  }
+  .submit-btn:hover{
+    text-decoration: none;
+    background-color: rgb(163, 152, 120);
+    box-shadow: rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px;
+  }
+
+  .archived-todos{
+    background: #2C2C2D;
+  }
+
+  .todo-item-label{
+    color: #DADADA;
+  }
+
+  .todo-category-label{
+    color: #979797;
+  }
+
+  .sub-heading{
+    color: #B6B6B6;
+  }
+
+  .settings-panel{
+    background: #2C2C2D;
+  }
+
+  .about-text{
+    color: #979797;
+  }
+
+  .settings-title{
+    color: #DADADA;
+  }
+
+  .mat-mdc-form-field, .mat-mdc-form-field-type-mat-input, .matform-field-appearance-outline, .mat-form-field-hide-placeholder {
+    color: red;
+  }
+
+  .mat-mdc-floating-label{
+    color: #979797 !important;
+  }
+
+  .mdc-text-field--outlined, .mdc-text-field__input{
+    color: #979797 !important;
+  }
+
+  .mat-mdc-input-element{
+    color: #979797 !important;
+  }
+
 }
