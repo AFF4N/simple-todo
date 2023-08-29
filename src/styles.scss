@@ -192,4 +192,47 @@ body.dark-mode {
     color: #979797 !important;
   }
 
+  .checkmark{
+    border: 2px #0E0E11 solid;
+    background: linear-gradient(180deg, #2B2D37 0%, #262933 100%);
+  }
+
+  .container input:checked ~ .checkmark {
+    background: linear-gradient(180deg, #2B2D37 0%, #262933 100%) !important;
+  }
+
+  .container .checkmark:after{
+    border-color: #DADADA !important;
+  }
+
+  .email-link{
+    color: #9a9a9a !important;
+  }
+
+  .notif-container{
+    background: #353535;
+  }
+
+  .action-buttons{
+    background: #232323;
+  }
+
+  .icon{
+    color: #F67979 !important;
+  }
+
+  .btn-no{
+    border-color: #686868;
+    background: #353535;
+    color: #a2a2a2;
+  }
+
+  .btn-yes{
+    color: #ffe2e2;
+  }
+
+  .footer-text{
+    border-color: #575767;
+  }
+
 }

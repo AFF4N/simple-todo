@@ -34,13 +34,32 @@
   line-height: 1.43;
 }
 
+.email-link {
+  margin: 0px;
+  text-decoration: underline;
+  color: #00000099;
+}
+
+// .divider {
+//   width: 2px;
+//   height: 540px;
+//   position: absolute;
+//   transform: rotate(-90deg);
+//   transform-origin: 0 0;
+//   opacity: 0.20;
+//   background: #D0D0D0;
+//   border-radius: 100px
+// }
+
+.footer-text{
+  padding-top: 10px;
+  border-top: 2px solid #D0D0D0;
+}
+
 @media (min-width: 600px) {
   .sheet-layout {
     max-width: 600px;
   }
-}
-
-@media (min-width: 600px) {
   .sheet-layout {
     padding-left: 24px;
     padding-right: 24px;
