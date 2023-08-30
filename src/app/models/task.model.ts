@@ -5,6 +5,7 @@ export class Task {
   checked: boolean = false;
   // status: string = '';
   emoji: string = '';
+  archived: boolean = false;
   // dateCreated: Date = new Date();
   dateCreated: string = '';
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
 @Component({
   selector: 'app-add-todo',
@@ -14,7 +15,7 @@ export class AddTodoComponent implements OnInit {
   allTasks: any = [];
   darkMode: any;
 
-  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService) {}
+  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.todoForm = new FormGroup({
@@ -42,7 +43,7 @@ export class AddTodoComponent implements OnInit {
   }
 
   select($event: { emoji: any }) {
-    console.log($event);
+    // console.log($event);
     this.selectedEmoji = $event.emoji;
     this.pasteHtmlAtCaret('<span>hi</span>');
     this.emojiPopup = false;
@@ -87,12 +88,18 @@ export class AddTodoComponent implements OnInit {
         category: this.todoForm.value.category,
         emoji: this.selectedEmoji.native,
         checked: false,
+        archived: false,
         dateCreated: new Date().toDateString()
         // dateCreated: 'Sun Aug 25 2023'
       }
-      console.log(todo);
+      // console.log(todo);
       this.todoService.addTask(todo);
       this.addNewSheet.dismiss();
+    } else {
+      let snackBarRef = this.snackBar.open('Select an emoji for a dash of personal flair! 😋', 'OK', {
+        duration: 2000,
+        verticalPosition: 'top'
+      });
     }
   }
 }

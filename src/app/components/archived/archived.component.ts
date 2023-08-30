@@ -27,7 +27,7 @@ export class ArchivedComponent implements OnInit {
       this.groupedTasks[date].push(task);
     });
 
-    console.log(this.groupedTasks);
+    // console.log(this.groupedTasks);
     this.isEmpty = Object.keys(this.groupedTasks).length === 0;
   }
 

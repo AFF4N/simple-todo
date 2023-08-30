@@ -3,15 +3,13 @@ import { Task } from '../models/task.model';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class TodoService {
-
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
-  archivedTasks: Task[] = []
+  archivedTasks: Task[] = [];
 
   allTasksSubject = new BehaviorSubject<Task[]>(this.allTasks);
   completedTasksSubject = new BehaviorSubject<Task[]>(this.completedTasks);
@@ -20,7 +18,7 @@ export class TodoService {
 
   constructor() {
     this.loadTasksFromLocalStorage();
-   }
+  }
 
   loadTasksFromLocalStorage() {
     const tasksData = localStorage.getItem('tasks');
@@ -28,11 +26,21 @@ export class TodoService {
     date.setHours(0, 0, 0, 0);
     if (tasksData) {
       this.allTasks = [...JSON.parse(tasksData)];
-      this.completedTasks = this.allTasks.filter((task) => task.checked);
-      this.incompleteTasks = this.allTasks.filter((task) => !task.checked);
+      this.completedTasks = this.allTasks.filter(
+        (task) => task.checked && !task.archived
+      );
+      this.incompleteTasks = this.allTasks.filter(
+        (task) => !task.checked && !task.archived
+      );
+      this.archivedTasks = this.allTasks.filter((task) => {
+        if (new Date(task.dateCreated) < new Date(date)) {
+          task.archived = true;
+        }
+      });
       this.archivedTasks = this.allTasks.filter(
-        (task) => new Date(task.dateCreated) < new Date(date));
-      console.log(this.archivedTasks);
+        (task) => task.archived == true
+      );
+      // console.log(this.archivedTasks);
       this.completedTasksSubject.next(this.completedTasks);
       this.incompleteTasksSubject.next(this.incompleteTasks);
       this.archivedTasksSubject.next(this.archivedTasks);
@@ -52,7 +60,7 @@ export class TodoService {
 
   deleteAllTasksfromLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(''));
-    location. reload()
+    location.reload();
   }
 
   addTask(task: Task) {
@@ -70,20 +78,24 @@ export class TodoService {
   updateStatusArrays() {
     let date = new Date();
     date.setHours(0, 0, 0, 0);
-    this.completedTasks = this.allTasks.filter(task => task.checked);
-    this.incompleteTasks = this.allTasks.filter(task => !task.checked);
-    this.archivedTasks = this.allTasks.filter((
-      task) => new Date(task.dateCreated) < new Date(date));
-    console.log(this.archivedTasks);
+    this.completedTasks = this.allTasks.filter(
+      (task) => task.checked && !task.archived
+    );
+    this.incompleteTasks = this.allTasks.filter(
+      (task) => !task.checked && !task.archived
+    );
+    this.archivedTasks = this.allTasks.filter((task) => task.archived == true);
+    // this.archivedTasks = this.allTasks.filter((
+    //   task) => new Date(task.dateCreated) < new Date(date) && task.archived);
+    // console.log(this.archivedTasks);
     this.completedTasksSubject.next(this.completedTasks);
     this.incompleteTasksSubject.next(this.incompleteTasks);
     this.archivedTasksSubject.next(this.archivedTasks);
     this.allTasksSubject.next(this.allTasks);
   }
 
-  toggleDarkMode(darkMode:boolean) {
-    localStorage.setItem("DarkMode", JSON.stringify(darkMode));
+  toggleDarkMode(darkMode: boolean) {
+    localStorage.setItem('DarkMode', JSON.stringify(darkMode));
     document.body.classList.toggle('dark-mode', darkMode);
   }
 }
-
