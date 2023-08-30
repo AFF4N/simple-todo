@@ -4,7 +4,7 @@
         <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
         <div class="status" >{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
       </div>
-      <div>
+      <div style="-webkit-tap-highlight-color: transparent;">
         <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">more_vert</mat-icon>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="openArchives()">

@@ -54,6 +54,11 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+.dark-mode {
+  --scrollbar-track-color: #333;
+  --scrollbar-thumb-color: #414141;
+}
+
 /* Styles for the scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
