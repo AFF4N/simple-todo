@@ -28,7 +28,7 @@
       <div class="todo-label">Incomplete</div>
       <div class="todo-items">
         <div class="todoIncomplete">
-          <div class="todo-container" *ngFor="let task of incompleteTasks; index as i">
+          <div [@slideInOut]="i" class="todo-container" *ngFor="let task of incompleteTasks; index as i">
             <label class="container">
               <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)" >
               <span class="checkmark"></span>
@@ -50,7 +50,7 @@
       <div class="todo-label">Completed</div>
       <div class="todo-items">
         <div class="todoIncomplete">
-          <div class="todo-container" *ngFor="let task of completedTasks; index as i">
+          <div [@slideInOut]="i" class="todo-container" *ngFor="let task of completedTasks; index as i">
             <label class="container">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>

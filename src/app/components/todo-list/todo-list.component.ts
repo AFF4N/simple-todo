@@ -6,11 +6,25 @@ import { ArchivedComponent } from '../archived/archived.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
+export const taskAnimations = [
+  trigger('slideInOut', [
+    transition(':enter', [
+      style({ transform: 'translateX(-100%)', opacity: 0 }),
+      animate('300ms ease-in', style({ transform: 'translateX(0)', opacity: 1 })),
+    ]),
+    transition(':leave', [
+      style({ transform: 'translateX(0)', opacity: 1 }),
+      animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 })),
+    ]),
+  ]),
+];
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.scss'],
+  animations: [taskAnimations],
 })
 export class TodoListComponent implements OnInit {
   todaysDate = new Date();

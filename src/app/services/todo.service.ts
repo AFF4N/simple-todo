@@ -94,6 +94,16 @@ export class TodoService {
     this.allTasksSubject.next(this.allTasks);
   }
 
+  deleteArchives(date: any){
+    // console.log(date);
+    let archives2dlt = this.archivedTasks.filter((task) => date == task.dateCreated);
+    // console.log(archives2dlt);
+    let archivesdltfromAll = this.allTasks.filter((task) => !archives2dlt.some(archive => archive.dateCreated === task.dateCreated));
+    // console.log(archivesdltfromAll);
+    localStorage.setItem('tasks', JSON.stringify(archivesdltfromAll));
+    this.loadTasksFromLocalStorage();
+  }
+
   toggleDarkMode(darkMode: boolean) {
     localStorage.setItem('DarkMode', JSON.stringify(darkMode));
     document.body.classList.toggle('dark-mode', darkMode);

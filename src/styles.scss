@@ -91,9 +91,9 @@ a {
 // .mdc-snackbar__actions{
 //   display: none !important;
 // }
-.mdc-button .mdc-button__label{
-  color: #424242 !important;
-}
+// .mdc-button .mdc-button__label{
+//   color: #424242 !important;
+// }
 .mat-mdc-snack-bar-container .mdc-snackbar__surface{
   background-color: #fff !important;
   margin-top: 5%;
@@ -263,9 +263,9 @@ body.dark-mode {
   .mat-mdc-snack-bar-container .mdc-snackbar__label {
     color: var(--mdc-snackbar-supporting-text-color) !important;
   }
-  .mdc-button .mdc-button__label{
-    color: var(--mdc-snackbar-supporting-text-color) !important;
-  }
+  // .mdc-button .mdc-button__label{
+  //   color: var(--mdc-snackbar-supporting-text-color) !important;
+  // }
   .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
     color: var(--mdc-snackbar-supporting-text-color) !important;
   }

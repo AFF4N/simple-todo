@@ -35,7 +35,7 @@
 }
 
 .archived-todos {
-  padding: 20px;
+  padding: 15px 25px 15px 25px;
   border-radius: 15px;
   background: #F8F8F8;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.25);
@@ -48,9 +48,20 @@
   font-style: normal;
   font-weight: 600;
   line-height: normal;
-  width: 130px;
+  width: 100%;
   height: 19px;
   padding: 16px 0px 3px 12px;
+}
+
+.dlt-icon{
+  width: 24px !important;
+  height: 24px !important;
+  color: #86858C;
+  font-size: 16px;
+  // width: 100%;
+  padding: 16px 0px 3px 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .archived-items {
