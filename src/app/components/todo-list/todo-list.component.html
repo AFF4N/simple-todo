@@ -1,36 +1,49 @@
 <div class="layout">
   <header class="header">
-      <div style="width: 100%;">
-        <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
-        <div class="status" >{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
-      </div>
-      <div style="-webkit-tap-highlight-color: transparent;">
-        <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">more_vert</mat-icon>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="openArchives()">
-            <mat-icon class="icons">archive</mat-icon>
-            <span>Archived</span>
-          </button>
-          <button mat-menu-item (click)="openSettings()">
-            <mat-icon class="icons">settings</mat-icon>
-            <span>Settings</span>
-          </button>
-          <button mat-menu-item (click)="openAbout()">
-            <mat-icon class="icons">info</mat-icon>
-            <span>About</span>
-          </button>
-        </mat-menu>
-      </div>
-      <div class="divider"></div>
-    </header>
+    <div style="width: 100%;">
+      <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
+      <div class="status">{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
+    </div>
+    <div style="-webkit-tap-highlight-color: transparent;">
+      <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openArchives()">
+          <mat-icon class="icons">archive</mat-icon>
+          <span>Archived</span>
+        </button>
+        <button mat-menu-item (click)="openSettings()">
+          <mat-icon class="icons">settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <button mat-menu-item (click)="openAbout()">
+          <mat-icon class="icons">info</mat-icon>
+          <span>About</span>
+        </button>
+      </mat-menu>
+    </div>
+    <div class="divider"></div>
+  </header>
   <div class="todos">
     <div class="incomplete-todos">
       <div class="todo-label">Incomplete</div>
       <div class="todo-items">
-        <div class="todoIncomplete">
-          <div [@slideInOut]="i" class="todo-container" *ngFor="let task of incompleteTasks; index as i">
+        <div cdkDropList
+            class="todoIncomplete example-list"
+            #incompleteTodos="cdkDropList"
+            (cdkDropListDropped)="drop($event)"
+            [cdkDropListData]="incompleteTasks"
+            [cdkDropListConnectedTo]="completedTodos"
+            [@.disabled]="disableAnimations"
+            >
+          <div cdkDrag
+            [@slideInOut]="i"
+            class="todo-container"
+            *ngFor="let task of incompleteTasks; index as i"
+            (cdkDragStarted)="onDragStarted($event)"
+            (cdkDragEnded)="onDragEnded($event, task)"
+          >
             <label class="container">
-              <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)" >
+              <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
             </label>
             <div class="todo-item">
@@ -49,8 +62,21 @@
     <div class="completed-todos">
       <div class="todo-label">Completed</div>
       <div class="todo-items">
-        <div class="todoIncomplete">
-          <div [@slideInOut]="i" class="todo-container" *ngFor="let task of completedTasks; index as i">
+        <div cdkDropList
+          class="todoIncomplete example-list"
+          #completedTodos="cdkDropList"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListData]="completedTasks"
+          [cdkDropListConnectedTo]="incompleteTodos"
+          [@.disabled]="disableAnimations"
+          >
+          <div cdkDrag
+            [@slideInOut]="i"
+            class="todo-container"
+            *ngFor="let task of completedTasks; index as i"
+            (cdkDragStarted)="onDragStarted($event)"
+            (cdkDragEnded)="onDragEnded($event, task)"
+            >
             <label class="container">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
@@ -65,9 +91,19 @@
             </div>
           </div>
         </div>
+      </div>
     </div>
   </div>
-</div>
-<div>
-  <img class="add-btn" style="cursor: pointer;" src="../../../assets/add.svg" alt="" (click)="AddNewTask()">
+  <div class="add-wrapper">
+    <img class="add-btn" style="cursor: pointer;" src="../../../assets/add.svg" alt="" (click)="AddNewTask()">
+  </div>
+  <div class="delete-wrapper">
+    <div style="position: fixed; bottom: 12%;">
+      <div *ngIf="deleteBtn" [@slideFromBottom]>
+        <div class="delete-btn drop-receiver" cdkDropList #deleteTodos="cdkDropList" (_drop)="onDelete($event)">
+          <mat-icon class="dlt-icon">delete</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

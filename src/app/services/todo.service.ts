@@ -104,6 +104,30 @@ export class TodoService {
     this.loadTasksFromLocalStorage();
   }
 
+  deleteTasks(task: Task) {
+    console.log('Deleted!' ,task);
+    const incompleteTasks = this.incompleteTasks.filter(tasks => tasks != task);
+    const completedTasks = this.completedTasks.filter(tasks => tasks != task);
+    const allTasks = this.allTasks.filter(tasks => tasks != task);
+    localStorage.setItem('tasks', JSON.stringify(allTasks));
+    const tasksData = localStorage.getItem('tasks');
+    if (tasksData) {
+        this.allTasks = [...JSON.parse(tasksData)];
+        this.completedTasks = this.allTasks.filter(
+          (task) => task.checked && !task.archived
+        );
+        this.incompleteTasks = this.allTasks.filter(
+          (task) => !task.checked && !task.archived
+        );
+      }
+    this.completedTasksSubject.next(completedTasks);
+    this.incompleteTasksSubject.next(incompleteTasks);
+    this.allTasksSubject.next(allTasks);
+    // console.log('Deleted incompleteTasks!' ,incompleteTasks);
+    // console.log('Deleted completedTasks!' ,completedTasks);
+    // console.log('Deleted allTasks!' ,allTasks);
+  }
+
   toggleDarkMode(darkMode: boolean) {
     localStorage.setItem('DarkMode', JSON.stringify(darkMode));
     document.body.classList.toggle('dark-mode', darkMode);

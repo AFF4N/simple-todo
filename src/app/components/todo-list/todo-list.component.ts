@@ -7,6 +7,7 @@ import { SettingsComponent } from '../settings/settings.component';
 import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 export const taskAnimations = [
   trigger('slideInOut', [
@@ -20,15 +21,30 @@ export const taskAnimations = [
     ]),
   ]),
 ];
+
+export const deleteBtnAnimation = [
+  trigger('slideFromBottom', [
+    transition(':enter', [
+      style({ transform: 'translateY(200%)' }),
+      animate('0.3s ease-out', style({ transform: 'translateY(-20%)' })),
+    ]),
+    transition(':leave', [
+      style({ transform: 'translateY(-20%)' }),
+      animate('0.3s ease-in', style({ transform: 'translateY(200%)' })),
+    ]),
+  ]),
+]
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.scss'],
-  animations: [taskAnimations],
+  animations: [taskAnimations, deleteBtnAnimation],
 })
 export class TodoListComponent implements OnInit {
   todaysDate = new Date();
   isChecked: boolean = false;
+  deleteBtn: boolean = false;
+  disableAnimations: boolean = false;
 
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
@@ -72,5 +88,55 @@ export class TodoListComponent implements OnInit {
 
   openAbout() {
     this.bottomSheet.open(AboutComponent);
+  }
+
+  onDragStarted(event: CdkDragStart) {
+    // console.log('Dragging started:', event);
+    this.deleteBtn = true;
+  }
+
+  onDragEnded(event: CdkDragEnd, task: any) {
+    // console.log('Dragging ended:', event);
+    // console.log('task:', task);
+    this.deleteBtn = false
+
+    const dropPointElement = document.elementFromPoint(event.dropPoint.x, event.dropPoint.y);
+    if (dropPointElement) {
+      const dropReceiver = dropPointElement.closest('.drop-receiver');
+      if (dropReceiver) {
+        const dropEvent = new CustomEvent('_drop', {detail: task});
+        dropReceiver.dispatchEvent(dropEvent);
+      }
+    }
+  }
+
+  drop(event: CdkDragDrop<Task[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+    // console.log('event.container:', event.container)
+    this.incompleteTasks.forEach(task => task.checked = false);
+    console.log('Incomplete Tasks:', this.incompleteTasks);
+    this.completedTasks.forEach(task => task.checked = true);
+    console.log('Completed Tasks:', this.completedTasks);
+    this.todoService.updateStatusArrays();
+    this.todoService.saveTasksToLocalStorage();
+  }
+
+  onDelete(event: any) {
+    this.disableAnimations = true;
+    event.stopPropagation();
+    let task = event.detail
+    this.todoService.deleteTasks(task);
+    setTimeout(() => {
+      this.disableAnimations = false;
+    }, 1000);
   }
 }

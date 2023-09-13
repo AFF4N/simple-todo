@@ -45,7 +45,7 @@ export class AddTodoComponent implements OnInit {
   select($event: { emoji: any }) {
     // console.log($event);
     this.selectedEmoji = $event.emoji;
-    this.pasteHtmlAtCaret('<span>hi</span>');
+    this.pasteHtmlAtCaret('<span style="\display: none"\>hi</span>');
     this.emojiPopup = false;
   }
   pasteHtmlAtCaret(html: string) {

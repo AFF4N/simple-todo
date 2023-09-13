@@ -44,7 +44,16 @@ $todo-app-theme: mat.define-light-theme((
 // // Override default theme with dark mode theme
 // @include angular-material-theme($dark-theme);
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  overflow-x: hidden;
+}
 body { margin: 0; font-family: 'Inter', sans-serif; }
 input,
 textarea,
@@ -168,6 +177,13 @@ body.dark-mode {
     text-decoration: none;
     background-color: rgb(163, 152, 120);
     box-shadow: rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px;
+  }
+
+  .todo-container {
+    background-color: #141419;
+  }
+  .example-list {
+    background-color: #141419;
   }
 
   .archived-todos{
