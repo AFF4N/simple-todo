@@ -99,7 +99,7 @@ export class TodoListComponent implements OnInit {
     // console.log('Dragging ended:', event);
     // console.log('task:', task);
     this.deleteBtn = false
-
+    this.disableAnimations = true;
     const dropPointElement = document.elementFromPoint(event.dropPoint.x, event.dropPoint.y);
     if (dropPointElement) {
       const dropReceiver = dropPointElement.closest('.drop-receiver');
@@ -108,6 +108,9 @@ export class TodoListComponent implements OnInit {
         dropReceiver.dispatchEvent(dropEvent);
       }
     }
+    setTimeout(() => {
+      this.disableAnimations = false;
+    }, 1000);
   }
 
   drop(event: CdkDragDrop<Task[]>) {
