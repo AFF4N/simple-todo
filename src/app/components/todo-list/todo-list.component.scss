@@ -16,14 +16,14 @@
 .date {
   position: absolute;
   color: #0E0E11;
-  font-size: 32px;
+  font-size: 30px;
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   word-wrap: break-word
 }
 
 .status {
-  margin-top: 47px;
+  margin-top: 42px;
   position: absolute;
   color: #575767;
   font-size: 14px;
@@ -35,7 +35,7 @@
 .divider {
   width: 2px;
   height: 90vw;
-  margin-top: 82px;
+  margin-top: 80px;
   position: absolute;
   transform: rotate(-90deg);
   transform-origin: 0 0;
@@ -318,12 +318,13 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-@media (max-width: 380px) {
+@media (max-width: 350px) {
   .date{
     font-size: 26px;
   }
   .status{
     margin-top: 35px;
+    font-size: 12px;
   }
   .divider{
     margin-top: 76px;

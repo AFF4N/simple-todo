@@ -126,9 +126,9 @@ export class TodoListComponent implements OnInit {
     }
     // console.log('event.container:', event.container)
     this.incompleteTasks.forEach(task => task.checked = false);
-    console.log('Incomplete Tasks:', this.incompleteTasks);
+    // console.log('Incomplete Tasks:', this.incompleteTasks);
     this.completedTasks.forEach(task => task.checked = true);
-    console.log('Completed Tasks:', this.completedTasks);
+    // console.log('Completed Tasks:', this.completedTasks);
     this.todoService.updateStatusArrays();
     this.todoService.saveTasksToLocalStorage();
   }

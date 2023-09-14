@@ -94,8 +94,9 @@ export class TodoService {
     this.allTasksSubject.next(this.allTasks);
   }
 
-  deleteArchives(date: any){
+  deleteArchives(task: any){
     // console.log(date);
+    let date = task.date;
     let archives2dlt = this.archivedTasks.filter((task) => date == task.dateCreated);
     // console.log(archives2dlt);
     let archivesdltfromAll = this.allTasks.filter((task) => !archives2dlt.some(archive => archive.dateCreated === task.dateCreated));
@@ -105,7 +106,7 @@ export class TodoService {
   }
 
   deleteTasks(task: Task) {
-    console.log('Deleted!' ,task);
+    // console.log('Deleted!' ,task);
     const incompleteTasks = this.incompleteTasks.filter(tasks => tasks != task);
     const completedTasks = this.completedTasks.filter(tasks => tasks != task);
     const allTasks = this.allTasks.filter(tasks => tasks != task);

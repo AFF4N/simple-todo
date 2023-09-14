@@ -33,6 +33,7 @@
             (cdkDropListDropped)="drop($event)"
             [cdkDropListData]="incompleteTasks"
             [cdkDropListConnectedTo]="completedTodos"
+            cdkDropListSortingDisabled
             [@.disabled]="disableAnimations"
             >
           <div cdkDrag
@@ -68,6 +69,7 @@
           (cdkDropListDropped)="drop($event)"
           [cdkDropListData]="completedTasks"
           [cdkDropListConnectedTo]="incompleteTodos"
+          cdkDropListSortingDisabled
           [@.disabled]="disableAnimations"
           >
           <div cdkDrag

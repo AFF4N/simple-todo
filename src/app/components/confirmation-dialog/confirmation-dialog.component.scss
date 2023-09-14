@@ -80,3 +80,16 @@
   background: #F2F2F2;
   color: #575757;
 }
+
+@media (max-width: 380px) {
+  .btn{
+    margin: 0px 3px 0 3px;
+    font-size: 9px;
+  }
+  .btn-no, .btn-yes{
+    width: 110px;
+  }
+  .description{
+    padding: 14px;
+  }
+}

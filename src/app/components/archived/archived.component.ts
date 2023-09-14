@@ -52,8 +52,23 @@ export class ArchivedComponent implements OnInit {
     });
   }
 
-  getGroupedTaskDates(): string[] {
-    return Object.keys(this.groupedTasks);
+  getGroupedTaskDates(): any[] {
+    // Convert groupedTasks to an array of objects
+    const groupedTasksArray = Object.keys(this.groupedTasks).map((date) => ({
+      date,
+      tasks: this.groupedTasks[date],
+    }));
+
+    // Sort groupedTasksArray in descending order based on the date
+    groupedTasksArray.sort((a, b) => {
+      const dateA:any = new Date(a.date);
+      const dateB:any = new Date(b.date);
+      return dateB - dateA;
+    });
+    // console.log(groupedTasksArray)
+    return groupedTasksArray;
+
+    // return Object.keys(this.groupedTasks);
   }
 
 }

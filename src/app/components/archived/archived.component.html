@@ -5,10 +5,10 @@
       <h5 class="heading">Archive 📥</h5>
       <p class="sub-heading">Rediscover the past: explore your archived tasks</p>
       <section class="content">
-        <div *ngFor="let date of getGroupedTaskDates()">
+        <div *ngFor="let task of getGroupedTaskDates()">
           <div style="display: flex;">
-            <div class="date-label">{{ date | date:'longDate'}}</div>
-            <span (click)="deleteArchives(date)">
+            <div class="date-label">{{ task.date | date:'longDate'}}</div>
+            <span (click)="deleteArchives(task)">
               <!-- <div class="dlt-icon">clear</div> -->
               <mat-icon class="dlt-icon">delete</mat-icon>
             </span>
@@ -16,7 +16,7 @@
           <div class="archived-todos">
             <div class="archived-items">
               <div class="todoIncomplete">
-                <div class="archived-container" *ngFor="let task of groupedTasks[date] ; let last = last">
+                <div class="archived-container" *ngFor="let task of groupedTasks[task.date] ; let last = last">
                   <!-- <label class="container">
                     <input id="todoIncomplete" type="checkbox" [checked]="task.checked">
                     <span class="checkmark"></span>
