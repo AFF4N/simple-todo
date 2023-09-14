@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
@@ -19,8 +19,8 @@ export class AddTodoComponent implements OnInit {
 
   ngOnInit() {
     this.todoForm = new FormGroup({
-      name: new FormControl(),
-      category: new FormControl(),
+      name: new FormControl(null, Validators.required),
+      category: new FormControl(null, Validators.required),
       emoji: new FormControl('✨'),
       checked: new FormControl()
     })
@@ -93,13 +93,27 @@ export class AddTodoComponent implements OnInit {
         // dateCreated: 'Sun Aug 25 2023'
       }
       // console.log(todo);
-      this.todoService.addTask(todo);
-      this.addNewSheet.dismiss();
+      if(this.validateTask(todo)){
+        this.todoService.addTask(todo);
+        this.addNewSheet.dismiss();
+      }
     } else {
       let snackBarRef = this.snackBar.open('Select an emoji for a dash of personal flair! 😋', 'OK', {
         duration: 2000,
         verticalPosition: 'top'
       });
     }
+  }
+
+  validateTask(todo: any) {
+    if(todo.name ==  null) {
+      this.snackBar.open('Add a task!', 'OK', {duration: 2000, verticalPosition: 'top'});
+      return false;
+    }
+    if(todo.category == null) {
+      this.snackBar.open('Add a category!', 'OK', {duration: 2000, verticalPosition: 'top'});
+      return false;
+    }
+    return true;
   }
 }

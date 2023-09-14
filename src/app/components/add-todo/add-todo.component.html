@@ -10,7 +10,7 @@
       </div>
         <mat-form-field color="primary" appearance="outline">
           <mat-label>Task</mat-label>
-          <input matInput  placeholder="Task" type="text" formControlName="name">
+          <input matInput  placeholder="Task" type="text" formControlName="name" required>
         </mat-form-field>
 
         <span style="display: flex; gap: 10px;">
@@ -30,12 +30,12 @@
             ></emoji-mart>
           <mat-form-field appearance="outline" color="primary" style="width: 100%;">
             <mat-label>Category</mat-label>
-            <input matInput placeholder="Category" type="text" formControlName="category">
+            <input matInput placeholder="Category" type="text" formControlName="category" required>
           </mat-form-field>
         </span>
 
         <input type="hidden" name="_gotcha" style="display:none !important">
-      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">Add Task
+      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()" [disabled]="todoForm.invalid">Add Task
         <span class="mui-span"></span>
       </button>
     </div>

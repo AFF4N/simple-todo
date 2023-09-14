@@ -8,6 +8,7 @@ import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export const taskAnimations = [
   trigger('slideInOut', [
@@ -50,7 +51,7 @@ export class TodoListComponent implements OnInit {
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
 
-  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService) {}
+  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
@@ -110,7 +111,7 @@ export class TodoListComponent implements OnInit {
     }
     setTimeout(() => {
       this.disableAnimations = false;
-    }, 1000);
+    }, 100);
   }
 
   drop(event: CdkDragDrop<Task[]>) {
@@ -134,12 +135,18 @@ export class TodoListComponent implements OnInit {
   }
 
   onDelete(event: any) {
-    this.disableAnimations = true;
-    event.stopPropagation();
-    let task = event.detail
-    this.todoService.deleteTasks(task);
-    setTimeout(() => {
-      this.disableAnimations = false;
-    }, 1000);
+    if(event){
+      this.disableAnimations = true;
+      event.stopPropagation();
+      let task = event.detail
+      this.todoService.deleteTasks(task);
+      setTimeout(() => {
+        this.disableAnimations = false;
+      }, 100);
+      let snackBarRef = this.snackBar.open('The task was deleted. 🗑️', 'X', {
+        duration: 2000,
+        verticalPosition: 'top'
+      });
+    }
   }
 }

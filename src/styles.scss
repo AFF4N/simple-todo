@@ -118,6 +118,11 @@ a {
 body.dark-mode {
   background-color: $color-bg-darkmode;
   color: $color-primary-darkmode;
+  --mdc-outlined-text-field-hover-outline-color: #2C2C2D;
+  --mdc-outlined-text-field-outline-color: #3e3e3e;
+  --mdc-outlined-text-field-focus-outline-color: rgb(163, 152, 120);
+  --mdc-outlined-text-field-input-text-placeholder-color: #424242;
+  --mdc-outlined-text-field-caret-color: #747474;
 
   .mat-bottom-sheet-container {
     background-color: rgb(24, 24, 24);

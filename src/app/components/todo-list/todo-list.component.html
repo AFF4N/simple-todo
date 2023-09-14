@@ -97,8 +97,13 @@
     </div>
   </div>
   <div class="add-wrapper">
-    <img class="add-btn" style="cursor: pointer;" src="../../../assets/add.svg" alt="" (click)="AddNewTask()">
+    <div class="add-btn" (click)="AddNewTask()">
+      <span class="add-icon">
+        <img style="height: 20px;" src="../../../assets/+.svg" alt="">
+      </span>
+    </div>
   </div>
+  <!-- <img class="add-wrapper" style="cursor: pointer" src="../../../assets/add.svg" alt="" (click)="AddNewTask()"> -->
   <div class="delete-wrapper">
     <div style="position: fixed; bottom: 12%;">
       <div *ngIf="deleteBtn" [@slideFromBottom]>
