@@ -46,12 +46,16 @@ export class TodoListComponent implements OnInit {
   isChecked: boolean = false;
   deleteBtn: boolean = false;
   disableAnimations: boolean = false;
+  isDarkMode: boolean = false
+  private readonly localStorageKey = 'DarkMode';
 
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
 
-  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {}
+  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
+    this.getDeviceTheme();
+  }
 
   ngOnInit() {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
@@ -65,8 +69,7 @@ export class TodoListComponent implements OnInit {
     this.completedTasks = this.completedTasks.filter((
       task) => new Date(task.dateCreated) >= new Date(date));
 
-    let darkMode = localStorage.getItem("DarkMode");
-    if( darkMode === 'true'){
+    if(this.isDarkMode == true){
       this.todoService.toggleDarkMode(true);
     }
   }
@@ -148,5 +151,22 @@ export class TodoListComponent implements OnInit {
         verticalPosition: 'top'
       });
     }
+  }
+
+  getDeviceTheme(){
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    // Retrieve the theme preference from local storage
+    const storedPreference = localStorage.getItem(this.localStorageKey);
+
+    // Set the initial theme based on device preference or stored preference
+    this.isDarkMode = storedPreference ? JSON.parse(storedPreference) : prefersDarkMode;
+    document.body.classList.toggle('dark-mode', this.isDarkMode);
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      // Update the theme when the device's color scheme changes
+      this.isDarkMode = e.matches;
+      this.todoService.toggleDarkMode(this.isDarkMode);
+    });
   }
 }

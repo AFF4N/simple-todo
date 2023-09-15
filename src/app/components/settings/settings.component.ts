@@ -10,16 +10,28 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class SettingsComponent implements OnInit {
 
-  darkMode:any;
+  darkMode: any;
 
-  constructor(private todoService: TodoService, private dialog: MatDialog) { }
+  constructor(private todoService: TodoService, private dialog: MatDialog) {
+    let theme = '';
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      this.todoService.getThemeInfo().subscribe(res=> {theme = res})
+      if( theme === 'dark'){
+        this.darkMode = true;
+      } else {
+        this.darkMode = false;
+      }
+    });
 
-  ngOnInit() {
-    let darkMode = localStorage.getItem("DarkMode");
-    if( darkMode === 'true'){
+    this.todoService.getThemeInfo().subscribe(res=> {theme = res})
+    if( theme === 'dark'){
       this.darkMode = true;
+    } else {
+      this.darkMode = false;
     }
   }
+
+  ngOnInit() {}
 
   onChange(event: any) {
     let toggle = event.target.checked;

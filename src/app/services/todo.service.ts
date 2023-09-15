@@ -10,7 +10,9 @@ export class TodoService {
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
   archivedTasks: Task[] = [];
+  themeSwitch: string = '';
 
+  themeSwitchSubject = new BehaviorSubject<any>(this.themeSwitch);
   allTasksSubject = new BehaviorSubject<Task[]>(this.allTasks);
   completedTasksSubject = new BehaviorSubject<Task[]>(this.completedTasks);
   incompleteTasksSubject = new BehaviorSubject<Task[]>(this.incompleteTasks);
@@ -132,5 +134,14 @@ export class TodoService {
   toggleDarkMode(darkMode: boolean) {
     localStorage.setItem('DarkMode', JSON.stringify(darkMode));
     document.body.classList.toggle('dark-mode', darkMode);
+    if(darkMode == true){
+      this.themeSwitchSubject.next('dark');
+    } else {
+      this.themeSwitchSubject.next('light');
+    }
+  }
+
+  getThemeInfo() {
+    return this.themeSwitchSubject.asObservable();
   }
 }
