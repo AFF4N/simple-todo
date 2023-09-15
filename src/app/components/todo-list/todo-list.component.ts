@@ -49,6 +49,7 @@ export class TodoListComponent implements OnInit {
   isDarkMode: boolean = false
   private readonly localStorageKey = 'DarkMode';
 
+  deletedTask: Task | null = null;
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
@@ -137,19 +138,40 @@ export class TodoListComponent implements OnInit {
     this.todoService.saveTasksToLocalStorage();
   }
 
+  undoDelete() {
+    if (this.deletedTask) {
+      this.disableAnimations = true;
+      this.todoService.restoreTask(this.deletedTask);
+      this.deletedTask = null;
+      setTimeout(() => {
+        this.disableAnimations = false;
+      }, 100);
+      this.snackBar.open('The task was restored ♻️', 'OK', {
+        duration: 2000,
+        verticalPosition: 'top'
+      });
+    }
+  }
+
   onDelete(event: any) {
     if(event){
       this.disableAnimations = true;
-      event.stopPropagation();
       let task = event.detail
+      this.deletedTask = task;
+
       this.todoService.deleteTasks(task);
       setTimeout(() => {
         this.disableAnimations = false;
       }, 100);
-      let snackBarRef = this.snackBar.open('The task was deleted. 🗑️', 'X', {
+
+      let snackBarRef = this.snackBar.open('The task was deleted 🗑️', 'Undo', {
         duration: 2000,
         verticalPosition: 'top'
       });
+      snackBarRef.onAction().subscribe(() => {
+        this.undoDelete();
+      });
+
     }
   }
 

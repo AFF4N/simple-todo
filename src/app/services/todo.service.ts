@@ -131,6 +131,12 @@ export class TodoService {
     // console.log('Deleted allTasks!' ,allTasks);
   }
 
+  restoreTask(task: Task) {
+    this.allTasks.push(task);
+    localStorage.setItem('tasks', JSON.stringify(this.allTasks));
+    this.loadTasksFromLocalStorage();
+  }
+
   toggleDarkMode(darkMode: boolean) {
     localStorage.setItem('DarkMode', JSON.stringify(darkMode));
     document.body.classList.toggle('dark-mode', darkMode);
