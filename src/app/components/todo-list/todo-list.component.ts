@@ -164,7 +164,7 @@ export class TodoListComponent implements OnInit {
         this.disableAnimations = false;
       }, 100);
 
-      let snackBarRef = this.snackBar.open('The task was deleted 🗑️', 'Undo', {
+      let snackBarRef = this.snackBar.open('The task was deleted 🗑️', 'undo', {
         duration: 2000,
         verticalPosition: 'top'
       });
