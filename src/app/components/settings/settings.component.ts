@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class SettingsComponent implements OnInit {
 
   darkMode: any;
+  isPWAstate: boolean = false;
 
   constructor(private todoService: TodoService, private dialog: MatDialog) {
     let theme = '';
@@ -29,6 +30,7 @@ export class SettingsComponent implements OnInit {
     } else {
       this.darkMode = false;
     }
+    this.getPWADisplayMode();
   }
 
   ngOnInit() {}
@@ -36,6 +38,22 @@ export class SettingsComponent implements OnInit {
   onChange(event: any) {
     let toggle = event.target.checked;
     this.todoService.toggleDarkMode(toggle);
+  }
+
+  getPWADisplayMode() {
+    const PWAmode = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    if(PWAmode){
+      this.isPWAstate = true;
+    }
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', (evt) => {
+      // let displayMode = 'browser';
+      if (evt.matches) {
+        // displayMode = 'standalone';
+        this.isPWAstate = true;
+      }
+      // Log display mode change to analytics
+      // console.log('DISPLAY_MODE_CHANGED', displayMode);
+    });
   }
 
   onDelete(){
@@ -49,6 +67,10 @@ export class SettingsComponent implements OnInit {
         this.todoService.deleteAllTasksfromLocalStorage();
       }
     });
+  }
+
+  onRefresh() {
+    location.reload();
   }
 
 }

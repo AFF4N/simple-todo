@@ -21,10 +21,21 @@
               <span class="slider"></span>
           </label>
         </div>
-        <div class="divider"></div>
-          <div class="setting">
-            <div class="settings-title">Danger Zone</div>
-            <button mat-button class="btn-danger" (click)="onDelete()">Delete all tasks</button>
+        <div *ngIf="isPWAstate">
+          <div class="divider"></div>
+            <div class="setting">
+              <div class="settings-title">Refresh</div>
+              <div class="settings-description">Facing issues on mobile? Refresh the app</div>
+              <button mat-button class="btn-primary" (click)="onRefresh()">Refresh</button>
+            </div>
+        </div>
+        <div>
+          <div class="divider"></div>
+            <div class="setting">
+              <div class="settings-title">Danger Zone</div>
+              <div class="settings-description">Clear all tasks from browser storage</div>
+              <button mat-button class="btn-danger" (click)="onDelete()">Delete all tasks</button>
+            </div>
           </div>
         </div>
       </section>

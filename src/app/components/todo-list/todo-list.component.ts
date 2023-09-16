@@ -146,7 +146,7 @@ export class TodoListComponent implements OnInit {
       setTimeout(() => {
         this.disableAnimations = false;
       }, 100);
-      this.snackBar.open('The task was restored ♻️', 'OK', {
+      this.snackBar.open('The task was restored 🔄️', 'OK', {
         duration: 2000,
         verticalPosition: 'top'
       });
