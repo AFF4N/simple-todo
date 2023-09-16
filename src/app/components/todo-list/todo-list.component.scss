@@ -118,7 +118,7 @@
 }
 
 .todo-item-label {
-  &_completed{
+  &_completed, &_msg{
     color: #B9B9BE;
   }
   width: 100%;

@@ -197,6 +197,9 @@ body.dark-mode {
 
   .todo-item-label{
     color: #DADADA;
+    &_msg {
+      color: #777777;
+    }
   }
 
   .todo-category-label{
