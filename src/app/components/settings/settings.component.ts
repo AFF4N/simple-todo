@@ -12,6 +12,7 @@ export class SettingsComponent implements OnInit {
 
   darkMode: any;
   isPWAstate: boolean = false;
+  loader: boolean = false;
 
   constructor(private todoService: TodoService, private dialog: MatDialog) {
     let theme = '';
@@ -70,6 +71,7 @@ export class SettingsComponent implements OnInit {
   }
 
   onRefresh() {
+    this.loader = true;
     location.reload();
   }
 

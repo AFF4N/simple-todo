@@ -142,8 +142,10 @@ export class TodoService {
     document.body.classList.toggle('dark-mode', darkMode);
     if(darkMode == true){
       this.themeSwitchSubject.next('dark');
+      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#141419");
     } else {
       this.themeSwitchSubject.next('light');
+      document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#fff");
     }
   }
 

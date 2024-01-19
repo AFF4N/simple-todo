@@ -26,7 +26,12 @@
             <div class="setting">
               <div class="settings-title">Refresh</div>
               <div class="settings-description">Facing issues on mobile? Refresh the app</div>
-              <button mat-button class="btn-primary" (click)="onRefresh()">Refresh</button>
+              <button *ngIf="!loader" mat-button class="btn-primary" (click)="onRefresh()">
+                <span>Refresh</span>
+              </button>
+              <button *ngIf="loader" mat-button class="btn-primary btn-primary-spinner">
+                <mat-spinner class="loading-spinner"></mat-spinner>
+              </button>
             </div>
         </div>
         <div>

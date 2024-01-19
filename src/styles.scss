@@ -190,6 +190,15 @@ body.dark-mode {
     }
     border: 1px solid #a7a7a7;
     color: #a7a7a7 !important;
+    &-spinner{
+      &:hover{
+        background-color: transparent;
+      }
+    }
+  }
+
+  .loading-spinner{
+    --mdc-circular-progress-active-indicator-color: #a7a7a7
   }
 
   .todo-container {

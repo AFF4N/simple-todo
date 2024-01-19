@@ -68,10 +68,6 @@
 }
 
 .btn-primary{
-  &:hover{
-    background-color: #777777;
-    color: white !important;
-  }
   margin-top: 10px;
   font-family: 'Inter';
   width: 100%;
@@ -81,6 +77,21 @@
   color: #777777 !important;
   background: transparent;
   flex-shrink: 0;
+  &:hover{
+    background-color: #777777;
+    color: white !important;
+  }
+  &-spinner{
+    &:hover{
+      background-color: transparent;
+    }
+  }
+}
+
+.loading-spinner{
+  height: 25px !important;
+  width: 25px !important;
+  --mdc-circular-progress-active-indicator-color: #777777
 }
 
 .btn-danger{
@@ -118,6 +129,8 @@
   position: relative;
   width: var(--width-of-switch);
   height: var(--height-of-switch);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 /* Hide default HTML checkbox */
@@ -138,7 +151,6 @@
   background-color: #e8e8e8;
   transition: .4s;
   border-radius: 30px;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .slider:before {
@@ -151,8 +163,7 @@
   top: 50%;
   transform: translateY(-50%);
   background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
-  ;
- transition: .4s;
+  transition: .4s;
 }
 
 input:checked + .slider {
