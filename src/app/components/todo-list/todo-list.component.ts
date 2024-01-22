@@ -53,6 +53,8 @@ export class TodoListComponent implements OnInit {
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
+  darkMode: any;
+  selectedEmoji: any;
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
@@ -93,6 +95,57 @@ export class TodoListComponent implements OnInit {
 
   openAbout() {
     this.bottomSheet.open(AboutComponent);
+  }
+
+  toggleElement(i: any) {
+    const theme:any = localStorage.getItem('DarkMode');
+    this.darkMode = JSON.parse(theme);
+  }
+
+  select($event: { emoji: any }, i:any, task: Task) {
+    task.emoji = $event.emoji;
+    this.disableAnimations = true;
+    this.todoService.updateTask(task);
+    setTimeout(() => {
+      this.disableAnimations = false;
+    }, 100);
+    this.snackBar.open('Emoji has been updated 😄', 'OK', {
+      duration: 2000,
+      verticalPosition: 'top'
+    });
+    this.pasteHtmlAtCaret('<span style="\display: none"\>hi</span>');
+  }
+  pasteHtmlAtCaret(html: string) {
+    var sel, range;
+    if (window.getSelection) {
+      // IE9 and non-IE
+      sel = window.getSelection();
+      if (sel?.getRangeAt && sel?.rangeCount) {
+        range = sel.getRangeAt(0);
+        range.deleteContents();
+
+        // Range.createContextualFragment() would be useful here but is
+        // non-standard and not supported in all browsers (IE9, for one)
+        var el = document.createElement('div');
+        el.innerHTML = html;
+        var frag = document.createDocumentFragment(),
+          node,
+          lastNode;
+        while ((node = el.firstChild)) {
+          lastNode = frag.appendChild(node);
+        }
+        range.insertNode(frag);
+
+        // Preserve the selection
+        if (lastNode) {
+          range = range.cloneRange();
+          range.setStartAfter(lastNode);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      }
+    }
   }
 
   onDragStarted(event: CdkDragStart) {

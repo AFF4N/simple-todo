@@ -15,27 +15,82 @@
 
         <span style="display: flex; gap: 10px;">
           <div class="emojis">
-            <button class="emoji-btn" mat-button (click)="toggleElement()">
+            <button title="Add Emoji" class="emoji-btn" mat-button (click)="toggleElement()" [matMenuTriggerFor]="emojiMenu">
               <ngx-emoji [isNative]="true" style="height: 24px;display: flex;" [emoji]="selectedEmoji? selectedEmoji: 'smile'"></ngx-emoji>
             </button>
           </div>
-          <emoji-mart
-            [showPreview]="false"
-            [isNative]="true"
-            [darkMode]="darkMode"
-            color="#4249a0"
-            class="emoji-popup"
-            *ngIf="emojiPopup"
-            (emojiSelect)="select($event)"
-            ></emoji-mart>
+          <mat-menu #emojiMenu="matMenu">
+            <emoji-mart
+              [showPreview]="false"
+              [isNative]="true"
+              [darkMode]="darkMode"
+              color="#4249a0"
+              class="emoji-popup"
+              (emojiSelect)="select($event)"
+              ></emoji-mart>
+          </mat-menu>
           <mat-form-field appearance="outline" color="primary" style="width: 100%;">
-            <mat-label>Category</mat-label>
-            <input matInput placeholder="Category" type="text" formControlName="category" required>
+            <mat-label>Notes</mat-label>
+            <textarea matInput placeholder="Add any additional notes here..." type="text" formControlName="note"></textarea>
+          </mat-form-field>
+        </span>
+
+        <div class="todo-item-label todo-item-label_msg" style="font-size: 16px;">Schedule Tasks</div>
+        <div class="schedule">
+          <mat-chip-listbox formControlName="scheduleSelect" aria-label="Schedule" (change)="onChangeSchedule($event)">
+            <mat-chip-option class="schedule-chip" value="Today" selected>
+              <div class="mat-chip-label">
+                <div class="calendar-icon">
+                  <div class="calendar-icon-head"></div>
+                  <div class="calendar-icon-label">{{dateToday}}</div>
+                </div>
+                Today
+              </div>
+            </mat-chip-option>
+            <mat-chip-option class="schedule-chip" value="Tomorrow">
+              <div class="mat-chip-label">
+                <div class="calendar-icon">
+                  <div class="calendar-icon-head"></div>
+                  <div class="calendar-icon-label">{{dateTomorrow}}</div>
+                </div>
+                Tomorrow
+              </div>
+            </mat-chip-option>
+            <mat-chip-option class="schedule-chip" value="Weekend">
+              <div class="mat-chip-label">
+                <div class="calendar-icon">
+                  <div class="calendar-icon-head"></div>
+                  <div class="calendar-icon-label">{{dateWeekend}}</div>
+                </div>
+                Weekend
+              </div>
+            </mat-chip-option>
+            <mat-chip-option class="schedule-chip" value="Date and Time">
+              <div class="mat-chip-label">
+                <div class="calendar-icon">
+                  <div class="calendar-icon-head"></div>
+                  <div class="calendar-icon-label">•••</div>
+                </div>
+                Date and Time
+              </div>
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+        <span style="display: flex; gap: 10px; margin-top: 10px;">
+          <mat-form-field *ngIf="date" appearance="outline" color="primary" style="width: 70%;">
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field *ngIf="time" appearance="outline" color="primary" style="width: 30%;">
+            <mat-label>Choose a Time</mat-label>
+            <input matInput type="time" class="bg-none" formControlName="time" (focus)="clearClockInterval()" placeholder="Time">
           </mat-form-field>
         </span>
 
         <input type="hidden" name="_gotcha" style="display:none !important">
-      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()" [disabled]="todoForm.invalid">Add Task
+      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">Add Task
         <span class="mui-span"></span>
       </button>
     </div>

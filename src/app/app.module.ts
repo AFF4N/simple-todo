@@ -15,7 +15,20 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { AboutComponent } from './components/about/about.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MatDateFormats, DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: ['LL', 'D MMMM YYYY', 'DD/MM/YYYY', 'DD/MM/YY', 'D-M-YYYY', 'D-M-YY'],
+  },
+  display: {
+    dateInput: 'D MMMM YYYY', // Format for '7 December 2023'
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  }
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,7 +55,14 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
-  providers: [],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    {provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

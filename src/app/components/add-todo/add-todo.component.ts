@@ -1,52 +1,63 @@
-import { Component, OnInit } from '@angular/core';
+import * as moment from 'moment';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
   styleUrls: ['./add-todo.component.scss'],
 })
-export class AddTodoComponent implements OnInit {
+
+export class AddTodoComponent implements OnInit, OnDestroy {
   selectedEmoji: any;
-  emojiPopup = false;
   todoForm: any;
   allTasks: any = [];
   darkMode: any;
+  previousIndex = 0;
+  time: boolean = false;
+  date: boolean = false;
+  selectedChip: any;
+  dateToday: any;
+  dateTomorrow: any;
+  dateWeekend: any;
+  clockInterval: any;
+  minDate: Date;
 
-  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {}
+  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    const currentDate = new Date().getDate();
+    this.minDate = new Date(currentYear, currentMonth, currentDate);
+  }
 
   ngOnInit() {
     this.todoForm = new FormGroup({
-      name: new FormControl(null, Validators.required),
-      category: new FormControl(null, Validators.required),
+      name: new FormControl('', Validators.required),
+      note: new FormControl(''),
       emoji: new FormControl('✨'),
-      checked: new FormControl()
+      date: new FormControl(new Date()),
+      time: new FormControl(new Date().getHours()  + ':' + new Date().getMinutes()),
+      scheduleSelect: new FormControl('Today'),
     })
-    // this.todoForm = this.fb.group({
-    //   name: [''],
-    //   category: [''],
-    //   emoji: [''],
-    //   checked: []
-    // });
     const tasksData = localStorage.getItem('tasks');
     if (tasksData) {
       this.allTasks = [JSON.parse(tasksData)];
     }
+    this.calculateDate();
   }
 
   toggleElement() {
-    this.emojiPopup = !this.emojiPopup;
+    // this.emojiPopup = !this.emojiPopup;
     const theme:any = localStorage.getItem('DarkMode');
     this.darkMode = JSON.parse(theme);
   }
 
   select($event: { emoji: any }) {
-    // console.log($event);
     this.selectedEmoji = $event.emoji;
     this.pasteHtmlAtCaret('<span style="\display: none"\>hi</span>');
-    this.emojiPopup = false;
   }
   pasteHtmlAtCaret(html: string) {
     var sel, range;
@@ -81,39 +92,160 @@ export class AddTodoComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    if(this.selectedEmoji){
-      const todo = {
-        name: this.todoForm.value.name,
-        category: this.todoForm.value.category,
-        emoji: this.selectedEmoji.native,
-        checked: false,
-        archived: false,
-        dateCreated: new Date().toDateString()
-        // dateCreated: 'Sun Aug 25 2023'
+  onChangeSchedule(event: any) {
+    this.selectedChip = event.source._keyManager._activeItemIndex;
+    if(this.selectedChip != undefined){
+      this.previousIndex = this.selectedChip;
+      if(this.selectedChip == 0){
+        this.todoForm.get('scheduleSelect').patchValue('Today')
       }
-      // console.log(todo);
-      if(this.validateTask(todo)){
-        this.todoService.addTask(todo);
-        this.addNewSheet.dismiss();
+      if(this.selectedChip == 1){
+        this.todoForm.get('scheduleSelect').patchValue('Tomorrow')
+      }
+      if(this.selectedChip == 2){
+        this.todoForm.get('scheduleSelect').patchValue('Weekend')
+      }
+      if(this.selectedChip == 3){
+        this.todoForm.get('scheduleSelect').patchValue('Date and Time')
+        this.clockInterval = setInterval(() => {
+          this.updateTime();
+        }, 1000);
+        this.date = true;
+        this.time = true;
+      } else {
+        this.date = false;
+        this.time = false;
+        this.clearClockInterval();
       }
     } else {
-      let snackBarRef = this.snackBar.open('Select an emoji for a dash of personal flair! 😋', 'OK', {
-        duration: 2000,
-        verticalPosition: 'top'
-      });
+      setTimeout(() => {
+        this.todoForm.get('scheduleSelect').patchValue(this.previousIndex);
+        this.date = false;
+        this.time = false;
+      }, 0)
+    }
+    this.selectedChip = this.todoForm.value.scheduleSelect;
+    this.calculateDate()
+  }
+
+  updateTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    // const seconds = now.getSeconds().toString().padStart(2, '0');
+    this.todoForm.get('time').patchValue(hours + ':' + minutes) ;
+    // console.log(hours + ':' + minutes);
+  }
+
+  onSubmit() {
+    let emoji;
+    if(!this.selectedEmoji){
+      emoji = {
+        "name": "Calendar",
+        "unified": "1F4C5",
+        "keywords": [
+            "calendar",
+            "calendar",
+            "schedule"
+        ],
+        "sheet": [
+            28,
+            28
+        ],
+        "shortName": "date",
+        "shortNames": [
+            "date"
+        ],
+        "id": "date",
+        "native": "📅",
+        "skinVariations": [],
+        "emoticons": [],
+        "hidden": [],
+        "text": "",
+        "set": "apple",
+        "colons": ":date:"
+      };
+    } else {
+      emoji = this.selectedEmoji;
+    }
+    const todo = {
+      id: uuidv4(),
+      name: this.todoForm.value.name,
+      note: this.todoForm.value.note,
+      emoji: emoji,
+      checked: false,
+      archived: false,
+      dateCreated: this.calculateDate()
+      // dateCreated: 'Sun Aug 25 2023'
+    }
+    // console.log(todo);
+    if(this.validateTask(todo)){
+      this.todoService.addTask(todo);
+      this.addNewSheet.dismiss();
     }
   }
 
+  calculateDate() {
+    let date = moment();
+
+    var today = date;
+    this.dateToday = today.format('D');
+
+    var tomorrow = date.clone().add(1, 'days')
+    this.dateTomorrow = tomorrow.format('D');
+
+    // Find the next Saturday
+    var saturday = date.clone().day('Saturday');
+    // If the current day is already Saturday, move to the next Saturday
+    if (date.day() >= 6) {
+      saturday.add(1, 'weeks');
+    }
+    this.dateWeekend = saturday.format('D');
+
+    if(this.selectedChip == 'Today'){
+      date = today;
+    }
+    if(this.selectedChip == 'Tomorrow'){
+      date = tomorrow;
+    }
+    if(this.selectedChip == 'Weekend'){
+      date = saturday;
+    }
+    if(this.selectedChip == 'Date and Time'){
+      date = moment(this.todoForm.value.date);
+      this.stitchTime(date);
+    }
+
+    // console.log(date.toDate().toString())
+    return date.toDate().toString();
+  }
+
+  stitchTime(date: any) {
+    let selectedTime = this.todoForm.value.time
+    const [hours, minutes] = selectedTime.split(':');
+    date.set({
+      hour: parseInt(hours, 10),
+      minute: parseInt(minutes, 10)
+    });
+    // console.log(date.toDate())
+    return date;
+  }
+
   validateTask(todo: any) {
-    if(todo.name ==  null) {
+    if(todo.name == '') {
       this.snackBar.open('Add a task!', 'OK', {duration: 2000, verticalPosition: 'top'});
       return false;
     }
-    if(todo.category == null) {
-      this.snackBar.open('Add a category!', 'OK', {duration: 2000, verticalPosition: 'top'});
-      return false;
-    }
     return true;
+  }
+
+  clearClockInterval() {
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+  }
+
+  ngOnDestroy() {
+    this.clearClockInterval();
   }
 }

@@ -1,10 +1,12 @@
+import { EmojiData } from "@ctrl/ngx-emoji-mart/ngx-emoji";
+
 export class Task {
-  // id: string = '';
+  id: string = '';
   name: string = '';
-  category: string = '';
+  note: string = '';
   checked: boolean = false;
   // status: string = '';
-  emoji: string = '';
+  emoji: string | EmojiData = '';
   archived: boolean = false;
   // dateCreated: Date = new Date();
   dateCreated: string = '';

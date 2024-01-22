@@ -23,7 +23,7 @@
                   </label> -->
                   <div class="todo-item">
                     <div class="todo-item-label">{{task.name}}</div>
-                    <div class="todo-category-label">{{task.emoji +' '+ task.category}}</div>
+                    <div class="todo-note-label">{{task.emoji +' '+ task.note}}</div>
                     <div [ngClass]="{'divider': !last}"></div>
                   </div>
                 </div>
@@ -46,7 +46,7 @@
                 <div class="todo-container" *ngFor="let task of archivedTasks; ; let last = last">
                   <div class="todo-item">
                     <div class="todo-item-label">{{task.name}}</div>
-                    <div class="todo-category-label">{{task.emoji +' '+ task.category}}</div>
+                    <div class="todo-note-label">{{task.emoji +' '+ task.note}}</div>
                     <div [ngClass]="{'divider': !last}"></div>
                   </div>
                 </div>

@@ -48,8 +48,27 @@
               <span class="checkmark"></span>
             </label>
             <div class="todo-item">
-              <div class="todo-item-label">{{task.name}}</div>
-              <div class="todo-category-label">{{task.emoji +' '+ task.category}}</div>
+              <span style="display: flex; gap: 5px; align-items: center;">
+                <div class="todo-item-emoji">
+                  <div class="emojis">
+                    <button title="Change Emoji" class="emoji-btn" (click)="toggleElement(i)" [matMenuTriggerFor]="emojiMenu">
+                      <ngx-emoji [isNative]="true" [emoji]="task.emoji" [size]="16"></ngx-emoji>
+                    </button>
+                  </div>
+                  <mat-menu #emojiMenu="matMenu">
+                    <emoji-mart [id]="i"
+                      [showPreview]="false"
+                      [isNative]="true"
+                      [darkMode]="darkMode"
+                      color="#4249a0"
+                      class="emoji-popup"
+                      (emojiSelect)="select($event, i, task)"
+                      ></emoji-mart>
+                  </mat-menu>
+                </div>
+                <div class="todo-item-label">{{task.name}}</div>
+              </span>
+              <div class="todo-note-label">{{(task.dateCreated | date:'MMM d, y, h:mm a') +' • '+ task.note}}</div>
             </div>
           </div>
           <div *ngIf="incompleteTasks.length === 0">
@@ -79,7 +98,7 @@
             (cdkDragStarted)="onDragStarted($event)"
             (cdkDragEnded)="onDragEnded($event, task)"
             >
-            <label class="container">
+            <label class="container" style="margin: 0;">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
             </label>
@@ -93,6 +112,20 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="tomorrow-todos" style="border-top: 3px solid #f6f6f6; padding-top: 5px;">
+      <div class="todo-item-label todo-item-label_msg" style="font-size: 16px; padding-bottom: 15px;">Plan tomorrow's success right here</div>
+      <div class="todo-label">Tomorrow</div>
+      <div class="todo-label">This week</div>
+      <div class="todo-label">This Month</div>
+      <div class="todo-label">Quite a bit more time</div>
+      <div class="todo-items">
+        <!-- <div *ngFor="let item of tomorrowTasks">{{item.name}}</div> -->
+        <!-- <div class="add-item-hover hide" *ngIf="!tomorrowForm" (click)="showTomorrowForm()">
+          <mat-icon class="hide" style="color: #B9B9BE;">add</mat-icon>
+        </div> -->
+        <!-- <div *ngIf="tomorrowForm">form fields here* &nbsp; <mat-icon (click)="tomorrowForm = false">close</mat-icon></div> -->
       </div>
     </div>
   </div>

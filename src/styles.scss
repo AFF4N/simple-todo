@@ -114,4 +114,19 @@ a {
 .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
   color: #424242 !important;
 }
-
+.mat-mdc-menu-panel{
+  max-width: 100% !important;
+}
+.mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary, .mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
+  --mdc-chip-disabled-label-text-color: white;
+  --mdc-chip-elevated-container-color: #000;
+  --mdc-chip-elevated-disabled-container-color: #000;
+  --mdc-chip-focus-state-layer-color: black;
+  --mdc-chip-focus-state-layer-opacity: 0.12;
+  --mdc-chip-label-text-color: white;
+  --mdc-chip-with-icon-icon-color: white;
+  --mdc-chip-with-icon-disabled-icon-color: white;
+  --mdc-chip-with-icon-selected-icon-color: white;
+  --mdc-chip-with-trailing-icon-disabled-trailing-icon-color: white;
+  --mdc-chip-with-trailing-icon-trailing-icon-color: white;
+}

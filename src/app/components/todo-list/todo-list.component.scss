@@ -124,19 +124,57 @@
   width: 100%;
   color: #575767;
   font-size: 18px;
+  max-width: 480px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   line-height: 24px;
   word-wrap: break-word
 }
 
-.todo-category-label {
+.todo-item-emoji {
   color: #B9B9BE;
   font-size: 14px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   word-wrap: break-word
 }
+
+.todo-note-label {
+  color: #B9B9BE;
+  font-size: 14px;
+  max-width: 480px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  word-wrap: break-word
+}
+
+::ng-deep section.emoji-mart {
+  border: none;
+}
+
+.emoji-btn {
+  &:hover {
+    border: 1px solid #ebebeb;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  height: 32px;
+  width: 32px;
+  border-radius: 5px;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+}
+
+// .emoji-popup {
+//   position: absolute;
+//   top: 100%;
+//   left: 0;
+//   z-index: 999 !important;
+//   padding-top: 5px;
+// }
 
 .add-wrapper{
   position: fixed;
@@ -213,14 +251,13 @@
 .container {
   display: block;
   position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
+  margin-top: 5px;
+  width: 28px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  cursor: pointer;
 }
 
 /* Hide the browser's default checkbox */

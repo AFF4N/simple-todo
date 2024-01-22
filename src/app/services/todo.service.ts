@@ -50,7 +50,7 @@ export class TodoService {
     }
     // else {
     //   localStorage.setItem('tasks', JSON.stringify([
-    //     {name: 'Click on + to add your first task', category: 'Fantastic start', emoji: '😎', checked: false}
+    //     {name: 'Click on + to add your first task', note: 'Fantastic start', emoji: '😎', checked: false}
     //   ]));
     //   this.loadTasksFromLocalStorage();
     // }
@@ -61,12 +61,23 @@ export class TodoService {
   }
 
   deleteAllTasksfromLocalStorage() {
-    localStorage.setItem('tasks', JSON.stringify(''));
+    localStorage.removeItem('tasks');
     location.reload();
   }
 
   addTask(task: Task) {
     this.allTasks.push(task);
+    this.updateStatusArrays();
+    this.saveTasksToLocalStorage();
+  }
+
+  updateTask(task: Task) {
+    const index = this.allTasks.findIndex(todo => todo.id === task.id);
+    if (index !== -1) {
+      this.allTasks[index] = { ...this.allTasks[index], ...task };
+    } else {
+      console.error(`Todo with ID ${task.id} not found.`);
+    }
     this.updateStatusArrays();
     this.saveTasksToLocalStorage();
   }
@@ -83,9 +94,7 @@ export class TodoService {
     this.completedTasks = this.allTasks.filter(
       (task) => task.checked && !task.archived
     );
-    this.incompleteTasks = this.allTasks.filter(
-      (task) => !task.checked && !task.archived
-    );
+    this.incompleteTasks = this.allTasks.filter((task) => !task.checked && !task.archived);
     this.archivedTasks = this.allTasks.filter((task) => task.archived == true);
     // this.archivedTasks = this.allTasks.filter((
     //   task) => new Date(task.dateCreated) < new Date(date) && task.archived);
