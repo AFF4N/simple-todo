@@ -6,40 +6,16 @@ import { ArchivedComponent } from '../archived/archived.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { taskAnimations, deleteBtnAnimation, slideTopBottom } from 'src/assets/animations';
+import * as moment from 'moment';
 
-export const taskAnimations = [
-  trigger('slideInOut', [
-    transition(':enter', [
-      style({ transform: 'translateX(-100%)', opacity: 0 }),
-      animate('300ms ease-in', style({ transform: 'translateX(0)', opacity: 1 })),
-    ]),
-    transition(':leave', [
-      style({ transform: 'translateX(0)', opacity: 1 }),
-      animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 })),
-    ]),
-  ]),
-];
-
-export const deleteBtnAnimation = [
-  trigger('slideFromBottom', [
-    transition(':enter', [
-      style({ transform: 'translateY(200%)' }),
-      animate('0.3s ease-out', style({ transform: 'translateY(-20%)' })),
-    ]),
-    transition(':leave', [
-      style({ transform: 'translateY(-20%)' }),
-      animate('0.3s ease-in', style({ transform: 'translateY(200%)' })),
-    ]),
-  ]),
-]
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.scss'],
-  animations: [taskAnimations, deleteBtnAnimation],
+  animations: [taskAnimations, deleteBtnAnimation, slideTopBottom],
 })
 export class TodoListComponent implements OnInit {
   todaysDate = new Date();
@@ -53,17 +29,33 @@ export class TodoListComponent implements OnInit {
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
+  // tomorrowsTasks: Task[] = [];
+  thisWeeksTasks: Task[] = [];
+  thisMonthsTasks: Task[] = [];
+  bitMoreTimeTasks: Task[] = [];
   darkMode: any;
   selectedEmoji: any;
+  collapsed: boolean = false;
+  // new Date().setDate(new Date().getDate()+1);
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
+  }
+
+  isTaskTomorrow(date: any) {
+    date = moment(date).date()
+    let dateTomorrow = moment().date()+1;
+    if (date == dateTomorrow){
+      return true
+    }
+    return false;
   }
 
   ngOnInit() {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
     this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
     this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
+    // this.todoService.tomorrowsTasksSubject.subscribe(tomorrowsTasks => this.tomorrowsTasks = tomorrowsTasks);
 
     let date = new Date();
     date.setHours(0, 0, 0, 0);
@@ -75,6 +67,7 @@ export class TodoListComponent implements OnInit {
     if(this.isDarkMode == true){
       this.todoService.toggleDarkMode(true);
     }
+    this.collapsed = JSON.parse(localStorage.getItem('collapse') as string);
   }
 
   toggleTaskStatus(task: Task) {
@@ -243,5 +236,10 @@ export class TodoListComponent implements OnInit {
       this.isDarkMode = e.matches;
       this.todoService.toggleDarkMode(this.isDarkMode);
     });
+  }
+
+  collapse() {
+    this.collapsed = !this.collapsed;
+    localStorage.setItem( 'collapse', this.collapsed.toString());
   }
 }

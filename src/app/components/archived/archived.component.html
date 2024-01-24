@@ -22,8 +22,8 @@
                     <span class="checkmark"></span>
                   </label> -->
                   <div class="todo-item">
-                    <div class="todo-item-label">{{task.name}}</div>
-                    <div class="todo-note-label">{{task.emoji +' '+ task.note}}</div>
+                    <div class="todo-item-label">{{task.emoji.native +' '+ task.name}}</div>
+                    <div class="todo-note-label">{{task.note}}</div>
                     <div [ngClass]="{'divider': !last}"></div>
                   </div>
                 </div>

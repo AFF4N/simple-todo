@@ -28,11 +28,12 @@ export class ArchivedComponent implements OnInit {
   groupTasks(){
     this.todoService.archivedTasksSubject.subscribe(archived => this.archivedTasks = archived);
     this.archivedTasks.forEach(task => {
-      const date = task.dateCreated; // Convert Date to string
-      if (!this.groupedTasks[date]) {
-        this.groupedTasks[date] = [];
+      const date = new Date(task.dateCreated); // Convert Date to string
+      date.setHours(0, 0, 0, 0);
+      if (!this.groupedTasks[date.toDateString()]) {
+        this.groupedTasks[date.toDateString()] = [];
       }
-      this.groupedTasks[date].push(task);
+      this.groupedTasks[date.toDateString()].push(task);
     });
 
     // console.log(this.groupedTasks);

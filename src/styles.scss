@@ -117,6 +117,20 @@ a {
 .mat-mdc-menu-panel{
   max-width: 100% !important;
 }
+.mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__action--primary {
+  padding-left: 12px !important;
+  padding-right: 12px;
+}
+.mdc-evolution-chip__cell {
+  justify-content: center;
+}
+.mdc-evolution-chip-set__chips {
+  flex-wrap: nowrap !important;
+  margin: 0px !important;
+}
+.mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
+  display: none;
+}
 .mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary, .mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
   --mdc-chip-disabled-label-text-color: white;
   --mdc-chip-elevated-container-color: #000;

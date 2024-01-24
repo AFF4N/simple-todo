@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
 import { BehaviorSubject } from 'rxjs';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,10 @@ export class TodoService {
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
+  // tomorrowsTasks: Task[] = [];
+  thisWeeksTasks: Task[] = [];
+  thisMonthsTasks: Task[] = [];
+  bitMoreTimeTasks: Task[] = [];
   archivedTasks: Task[] = [];
   themeSwitch: string = '';
 
@@ -16,6 +21,7 @@ export class TodoService {
   allTasksSubject = new BehaviorSubject<Task[]>(this.allTasks);
   completedTasksSubject = new BehaviorSubject<Task[]>(this.completedTasks);
   incompleteTasksSubject = new BehaviorSubject<Task[]>(this.incompleteTasks);
+  // tomorrowsTasksSubject = new BehaviorSubject<Task[]>(this.tomorrowsTasks);
   archivedTasksSubject = new BehaviorSubject<Task[]>(this.archivedTasks);
 
   constructor() {
@@ -32,7 +38,7 @@ export class TodoService {
         (task) => task.checked && !task.archived
       );
       this.incompleteTasks = this.allTasks.filter(
-        (task) => !task.checked && !task.archived
+        (task) => !task.checked && !task.archived && (new Date(task.dateCreated).getDate() == new Date().getDate())
       );
       this.archivedTasks = this.allTasks.filter((task) => {
         if (new Date(task.dateCreated) < new Date(date)) {
@@ -42,9 +48,16 @@ export class TodoService {
       this.archivedTasks = this.allTasks.filter(
         (task) => task.archived == true
       );
+      // this.tomorrowsTasks = this.allTasks.filter(task => {
+      //   moment(task.dateCreated).date() == moment().date()+1;
+
+      // });
+      // console.log(this.tomorrowsTasks);
+
       // console.log(this.archivedTasks);
       this.completedTasksSubject.next(this.completedTasks);
       this.incompleteTasksSubject.next(this.incompleteTasks);
+      // this.tomorrowsTasksSubject.next(this.tomorrowsTasks);
       this.archivedTasksSubject.next(this.archivedTasks);
       this.allTasksSubject.next(this.allTasks);
     }
@@ -94,7 +107,7 @@ export class TodoService {
     this.completedTasks = this.allTasks.filter(
       (task) => task.checked && !task.archived
     );
-    this.incompleteTasks = this.allTasks.filter((task) => !task.checked && !task.archived);
+    this.incompleteTasks = this.allTasks.filter((task) => !task.checked && !task.archived && (new Date(task.dateCreated).getDate() == new Date().getDate()) );
     this.archivedTasks = this.allTasks.filter((task) => task.archived == true);
     // this.archivedTasks = this.allTasks.filter((
     //   task) => new Date(task.dateCreated) < new Date(date) && task.archived);
