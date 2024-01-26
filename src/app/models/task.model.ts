@@ -1,12 +1,11 @@
 export class Task {
   id: string = '';
+  type: string = '';
   name: string = '';
   note: string = '';
   checked: boolean = false;
-  // status: string = '';
   emoji: any;
   archived: boolean = false;
-  // dateCreated: Date = new Date();
   dateCreated: string = '';
 }
 

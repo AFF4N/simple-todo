@@ -1,10 +1,11 @@
 import * as moment from 'moment';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
 import { v4 as uuidv4 } from 'uuid';
+import { Task } from 'src/app/models/task.model';
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
@@ -14,7 +15,6 @@ import { v4 as uuidv4 } from 'uuid';
 export class AddTodoComponent implements OnInit, OnDestroy {
   selectedEmoji: any;
   todoForm: any;
-  allTasks: any = [];
   darkMode: any;
   previousIndex = 0;
   time: boolean = false;
@@ -25,8 +25,24 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   dateWeekend: any;
   clockInterval: any;
   minDate: Date;
+  taskType: any;
+  editMode: boolean;
+  headerLabel: string = '';
+  headerDesc: string = '';
+  btnLabel: string = '';
 
-  constructor(private fb: FormBuilder, private addNewSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
+  constructor(
+    @Inject(MAT_BOTTOM_SHEET_DATA) public todoData: Task,
+    private bottomSheet: MatBottomSheet,
+    private todoService: TodoService,
+    private snackBar: MatSnackBar
+  ) {
+    console.log(todoData);
+    if(todoData !== null) {
+      this.editMode = true;
+    } else {
+      this.editMode = false;
+    }
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const currentDate = new Date().getDate();
@@ -39,12 +55,27 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       note: new FormControl(''),
       emoji: new FormControl('✨'),
       date: new FormControl(new Date()),
-      time: new FormControl(new Date().getHours()  + ':' + new Date().getMinutes()),
+      time: new FormControl(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })),
       scheduleSelect: new FormControl('Today'),
     })
-    const tasksData = localStorage.getItem('tasks');
-    if (tasksData) {
-      this.allTasks = [JSON.parse(tasksData)];
+    if(this.editMode == false) {
+      this.headerLabel = 'What tasks we got today? 🤔';
+      this.headerDesc = 'Add a dash of productivity to your day';
+      this.btnLabel = 'Add Task';
+    } else {
+      this.headerLabel = 'Edit Your Task 🖊️';
+      this.headerDesc = 'Make it even better! Update the details of your task.';
+      this.btnLabel = 'Save Changes';
+      this.todoForm.get('name').patchValue(this.todoData.name);
+      this.todoForm.get('note').patchValue(this.todoData.note);
+      this.selectedEmoji = this.todoData.emoji;
+      this.todoForm.get('date').patchValue(new Date(this.todoData.dateCreated));
+      this.todoForm.get('time').patchValue(new Date(this.todoData.dateCreated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
+      this.todoForm.get('scheduleSelect').patchValue('Date and Time');
+      this.selectedChip = 'Date and Time'
+      this.date = true;
+      this.time = true;
+      this.clearClockInterval();
     }
     this.calculateDate();
   }
@@ -141,48 +172,66 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     let emoji;
     if(!this.selectedEmoji){
       emoji = {
-        "name": "Calendar",
-        "unified": "1F4C5",
+        "name": "Spiral Calendar",
+        "unified": "1F5D3-FE0F",
         "keywords": [
-            "calendar",
-            "calendar",
-            "schedule"
+            "spiral_calendar",
+            "date",
+            "schedule",
+            "planning"
         ],
         "sheet": [
-            28,
-            28
+            32,
+            5
         ],
-        "shortName": "date",
+        "shortName": "spiral_calendar_pad",
         "shortNames": [
-            "date"
+            "spiral_calendar_pad"
         ],
-        "id": "date",
-        "native": "📅",
+        "id": "spiral_calendar_pad",
+        "native": "🗓️",
         "skinVariations": [],
         "emoticons": [],
         "hidden": [],
         "text": "",
         "set": "apple",
-        "colons": ":date:"
+        "colons": ":spiral_calendar_pad:"
       };
     } else {
       emoji = this.selectedEmoji;
     }
-    const todo = {
-      id: uuidv4(),
-      name: this.todoForm.value.name,
-      note: this.todoForm.value.note,
-      emoji: emoji,
-      checked: false,
-      archived: false,
-      dateCreated: this.calculateDate()
-      // dateCreated: 'Sun Aug 25 2023'
+    if(!this.editMode){
+      const todo = {
+        id: uuidv4(),
+        name: this.todoForm.value.name,
+        note: this.todoForm.value.note,
+        emoji: emoji,
+        checked: false,
+        archived: false,
+        dateCreated: this.calculateDate(),
+        type: this.taskType
+        // dateCreated: 'Sun Aug 25 2023'
+      }
+      if(this.validateTask(todo)){
+        this.todoService.addTask(todo);
+      }
+    } else {
+      const todo = {
+        id: this.todoData.id,
+        name: this.todoForm.value.name,
+        note: this.todoForm.value.note,
+        emoji: emoji,
+        checked: this.todoData.checked,
+        archived: this.todoData.archived,
+        dateCreated: this.calculateDate(),
+        type: this.taskType
+        // dateCreated: 'Sun Aug 25 2023'
+      }
+      if(this.validateTask(todo)){
+        this.todoService.updateTask(todo);
+      }
     }
-    // console.log(todo);
-    if(this.validateTask(todo)){
-      this.todoService.addTask(todo);
-      this.addNewSheet.dismiss();
-    }
+    this.bottomSheet.dismiss();
   }
 
   calculateDate() {
@@ -216,8 +265,22 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       this.stitchTime(date);
     }
 
-    // console.log(date.toDate().toString())
+    this.getTaskType(date);
     return date.toDate().toString();
+  }
+
+  getTaskType(dateCreated: moment.Moment){
+    const dayStart = moment().startOf('day');
+    const dayEnd = moment().endOf('day');
+    if(dateCreated.isBefore(dayEnd) || dateCreated.isAfter(dayStart)) {
+      this.taskType = 'today';
+    }
+    if(dateCreated.isBefore(dayStart)) {
+      this.taskType = 'archived';
+    }
+    if(dateCreated.isAfter(dayEnd)) {
+      this.taskType = 'future';
+    }
   }
 
   stitchTime(date: any) {
@@ -233,7 +296,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
 
   validateTask(todo: any) {
     if(todo.name == '') {
-      this.snackBar.open('Add a task!', 'OK', {duration: 2000, verticalPosition: 'top'});
+      this.snackBar.open('Add a Task!', 'OK', {duration: 2000, verticalPosition: 'top'});
       return false;
     }
     return true;

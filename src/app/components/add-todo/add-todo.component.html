@@ -3,10 +3,8 @@
   <form [formGroup]="todoForm">
     <div class="todo-form-fields">
       <div class="form-header">
-        <h5 class="heading-form">What tasks we got today? 🤔
-        </h5>
-        <p class="MuiTypography-root MuiTypography-body1 css-1ymvkef heading-desc">Add a dash of productivity to your day
-        </p>
+        <h5 class="heading-form">{{headerLabel}}</h5>
+        <p class="heading-desc">{{headerDesc}}</p>
       </div>
         <mat-form-field color="primary" appearance="outline">
           <mat-label>Task</mat-label>
@@ -98,7 +96,7 @@
         </span>
 
         <input type="hidden" name="_gotcha" style="display:none !important">
-      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">Add Task
+      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">{{btnLabel}}
         <span class="mui-span"></span>
       </button>
     </div>

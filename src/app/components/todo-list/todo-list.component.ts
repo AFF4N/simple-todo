@@ -27,35 +27,32 @@ export class TodoListComponent implements OnInit {
 
   deletedTask: Task | null = null;
   allTasks: Task[] = [];
-  completedTasks: Task[] = [];
-  incompleteTasks: Task[] = [];
-  // tomorrowsTasks: Task[] = [];
-  thisWeeksTasks: Task[] = [];
-  thisMonthsTasks: Task[] = [];
-  bitMoreTimeTasks: Task[] = [];
+  completedTasks: any[] = [];
+  incompleteTasks: any[] = [];
+  futureTasks: any[] = [];
+  // thisWeeksTasks: Task[] = [];
+  // thisMonthsTasks: Task[] = [];
+  // bitMoreTimeTasks: Task[] = [];
   darkMode: any;
   selectedEmoji: any;
-  collapsed: boolean = false;
-  // new Date().setDate(new Date().getDate()+1);
+  collapsed: boolean = true;
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
-  }
-
-  isTaskTomorrow(date: any) {
-    date = moment(date).date()
-    let dateTomorrow = moment().date()+1;
-    if (date == dateTomorrow){
-      return true
-    }
-    return false;
   }
 
   ngOnInit() {
     this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
     this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
     this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
-    // this.todoService.tomorrowsTasksSubject.subscribe(tomorrowsTasks => this.tomorrowsTasks = tomorrowsTasks);
+    this.todoService.futureTasksSubject.subscribe(futureTasks => {
+      this.futureTasks = futureTasks;
+      // this.disableAnimations = true;
+      this.sortFutureTasks();
+      // setTimeout(() => {
+      //   this.disableAnimations = false;
+      // }, 100);
+    });
 
     let date = new Date();
     date.setHours(0, 0, 0, 0);
@@ -70,12 +67,44 @@ export class TodoListComponent implements OnInit {
     this.collapsed = JSON.parse(localStorage.getItem('collapse') as string);
   }
 
+  sortFutureTasks() {
+    const futureTasks: { label: string, tasks: Task[] }[] = [
+      { label: 'Tomorrow', tasks: [] },
+      { label: 'This Week', tasks: [] },
+      { label: 'This Month', tasks: [] },
+      { label: 'Quite a bit more time', tasks: [] },
+    ];
+
+    this.futureTasks.forEach((task: Task) => {
+      let date = moment();
+      var tomorrow = date.clone().add(1, 'days');
+
+      if (moment(task.dateCreated).isSame(tomorrow, 'day')) {
+        futureTasks[0].tasks.push(task); // Index 0 corresponds to 'Tomorrow'
+      } else if (moment(task.dateCreated).isBefore(date.clone().isoWeekday(7))) {
+        futureTasks[1].tasks.push(task); // Index 1 corresponds to 'This Week'
+      } else if (moment(task.dateCreated).isBefore(date.clone().endOf('month'))) {
+        futureTasks[2].tasks.push(task); // Index 2 corresponds to 'This Month'
+      } else {
+        futureTasks[3].tasks.push(task); // Index 3 corresponds to 'Quite a bit more time'
+      }
+    });
+
+    this.futureTasks = futureTasks.filter(category => category.tasks.length > 0);
+    // console.log("future tasks", futureTasks);
+  }
+
   toggleTaskStatus(task: Task) {
     this.todoService.toggleTaskStatus(task);
   }
 
   AddNewTask(){
     this.bottomSheet.open(AddTodoComponent);
+  }
+
+  editTask(task: any) {
+    // console.log(task)
+    this.bottomSheet.open(AddTodoComponent, { data: task });
   }
 
   openArchives() {
@@ -95,7 +124,7 @@ export class TodoListComponent implements OnInit {
     this.darkMode = JSON.parse(theme);
   }
 
-  select($event: { emoji: any }, i:any, task: Task) {
+  select($event: { emoji: any }, task: Task) {
     task.emoji = $event.emoji;
     this.disableAnimations = true;
     this.todoService.updateTask(task);

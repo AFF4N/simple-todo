@@ -10,10 +10,7 @@ export class TodoService {
   allTasks: Task[] = [];
   completedTasks: Task[] = [];
   incompleteTasks: Task[] = [];
-  // tomorrowsTasks: Task[] = [];
-  thisWeeksTasks: Task[] = [];
-  thisMonthsTasks: Task[] = [];
-  bitMoreTimeTasks: Task[] = [];
+  futureTasks: Task[] = [];
   archivedTasks: Task[] = [];
   themeSwitch: string = '';
 
@@ -21,7 +18,7 @@ export class TodoService {
   allTasksSubject = new BehaviorSubject<Task[]>(this.allTasks);
   completedTasksSubject = new BehaviorSubject<Task[]>(this.completedTasks);
   incompleteTasksSubject = new BehaviorSubject<Task[]>(this.incompleteTasks);
-  // tomorrowsTasksSubject = new BehaviorSubject<Task[]>(this.tomorrowsTasks);
+  futureTasksSubject = new BehaviorSubject<Task[]>(this.futureTasks);
   archivedTasksSubject = new BehaviorSubject<Task[]>(this.archivedTasks);
 
   constructor() {
@@ -30,43 +27,28 @@ export class TodoService {
 
   loadTasksFromLocalStorage() {
     const tasksData = localStorage.getItem('tasks');
-    let date = new Date();
-    date.setHours(0, 0, 0, 0);
+    const dayStart = moment().startOf('day');
+    const dayEnd = moment().endOf('day');
     if (tasksData) {
       this.allTasks = [...JSON.parse(tasksData)];
-      this.completedTasks = this.allTasks.filter(
-        (task) => task.checked && !task.archived
-      );
-      this.incompleteTasks = this.allTasks.filter(
-        (task) => !task.checked && !task.archived && (new Date(task.dateCreated).getDate() == new Date().getDate())
-      );
-      this.archivedTasks = this.allTasks.filter((task) => {
-        if (new Date(task.dateCreated) < new Date(date)) {
+      this.allTasks = this.allTasks.map((task) => {
+        const taskDate = moment(task.dateCreated);
+        if(taskDate.isBefore(dayEnd) || taskDate.isAfter(dayStart)) {
+          task.type = 'today';
+          task.archived = false;
+        }
+        if(taskDate.isBefore(dayStart)) {
+          task.type = 'archived';
           task.archived = true;
         }
+        if(taskDate.isAfter(dayEnd)) {
+          task.type = 'future';
+          task.archived = false;
+        }
+        return task;
       });
-      this.archivedTasks = this.allTasks.filter(
-        (task) => task.archived == true
-      );
-      // this.tomorrowsTasks = this.allTasks.filter(task => {
-      //   moment(task.dateCreated).date() == moment().date()+1;
-
-      // });
-      // console.log(this.tomorrowsTasks);
-
-      // console.log(this.archivedTasks);
-      this.completedTasksSubject.next(this.completedTasks);
-      this.incompleteTasksSubject.next(this.incompleteTasks);
-      // this.tomorrowsTasksSubject.next(this.tomorrowsTasks);
-      this.archivedTasksSubject.next(this.archivedTasks);
-      this.allTasksSubject.next(this.allTasks);
+      this.updateStatusArrays();
     }
-    // else {
-    //   localStorage.setItem('tasks', JSON.stringify([
-    //     {name: 'Click on + to add your first task', note: 'Fantastic start', emoji: '😎', checked: false}
-    //   ]));
-    //   this.loadTasksFromLocalStorage();
-    // }
   }
 
   saveTasksToLocalStorage() {
@@ -102,19 +84,23 @@ export class TodoService {
   }
 
   updateStatusArrays() {
-    let date = new Date();
-    date.setHours(0, 0, 0, 0);
-    this.completedTasks = this.allTasks.filter(
-      (task) => task.checked && !task.archived
-    );
-    this.incompleteTasks = this.allTasks.filter((task) => !task.checked && !task.archived && (new Date(task.dateCreated).getDate() == new Date().getDate()) );
-    this.archivedTasks = this.allTasks.filter((task) => task.archived == true);
-    // this.archivedTasks = this.allTasks.filter((
-    //   task) => new Date(task.dateCreated) < new Date(date) && task.archived);
-    // console.log(this.archivedTasks);
+    this.completedTasks = this.allTasks
+    .filter( (task) => task.checked && !task.archived)
+    .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+    this.incompleteTasks = this.allTasks
+    .filter( (task) => !task.checked && !task.archived && task.type == 'today')
+    .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+    this.futureTasks = this.allTasks
+    .filter( (task) => !task.checked && !task.archived && task.type == 'future')
+    .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+    this.archivedTasks = this.allTasks
+    .filter( (task) => task.archived == true)
+    .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+
     this.completedTasksSubject.next(this.completedTasks);
     this.incompleteTasksSubject.next(this.incompleteTasks);
     this.archivedTasksSubject.next(this.archivedTasks);
+    this.futureTasksSubject.next(this.futureTasks);
     this.allTasksSubject.next(this.allTasks);
   }
 
