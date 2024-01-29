@@ -10,5 +10,5 @@ export class Task {
 }
 
 export class GroupedTasks {
-  [date: string]: Task[]; // Change `any[]` to the type of your task objects
+  [date: string]: Task[];
 }

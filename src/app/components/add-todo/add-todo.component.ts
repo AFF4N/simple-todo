@@ -139,7 +139,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       if(this.selectedChip == 3){
         this.todoForm.get('scheduleSelect').patchValue('Date and Time')
         this.clockInterval = setInterval(() => {
-          this.updateTime();
+          if(!this.editMode){
+            this.updateTime();
+          }
         }, 1000);
         this.date = true;
         this.time = true;
