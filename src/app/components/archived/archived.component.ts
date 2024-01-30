@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GroupedTasks, Task } from 'src/app/models/task.model';
 import { TodoService } from 'src/app/services/todo.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-archived',
@@ -11,12 +12,12 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
   styleUrls: ['./archived.component.scss']
 })
 
-export class ArchivedComponent implements OnInit {
+export class ArchivedComponent implements OnInit, OnDestroy {
 
   archivedTasks: Task[] = [];
   groupedTasks: GroupedTasks = {};
   isEmpty: boolean = false;
-  // groupedTasks: { [key: string]: any[] } = {};
+  subscription: Subscription;
 
   constructor(private todoService: TodoService, private dialog: MatDialog, private bottomSheet: MatBottomSheet) { }
 
@@ -26,7 +27,7 @@ export class ArchivedComponent implements OnInit {
   }
 
   groupTasks(){
-    this.todoService.archivedTasksSubject.subscribe(archived => this.archivedTasks = archived);
+    this.subscription = this.todoService.archivedTasksSubject.subscribe(archived => this.archivedTasks = archived);
     this.archivedTasks.forEach(task => {
       const date = new Date(task.dateCreated); // Convert Date to string
       date.setHours(0, 0, 0, 0);
@@ -72,4 +73,7 @@ export class ArchivedComponent implements OnInit {
     // return Object.keys(this.groupedTasks);
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

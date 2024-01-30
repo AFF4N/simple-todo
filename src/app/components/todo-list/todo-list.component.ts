@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Task } from 'src/app/models/task.model';
 import { AddTodoComponent } from '../add-todo/add-todo.component';
@@ -6,10 +6,11 @@ import { ArchivedComponent } from '../archived/archived.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
-import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { taskAnimations, deleteBtnAnimation, slideTopBottom } from 'src/assets/animations';
 import * as moment from 'moment';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-todo-list',
@@ -42,16 +43,28 @@ export class TodoListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.todoService.allTasksSubject.subscribe(tasks => this.allTasks = tasks);
-    this.todoService.completedTasksSubject.subscribe(completeTasks => this.completedTasks = completeTasks);
-    this.todoService.incompleteTasksSubject.subscribe(incompleteTasks => this.incompleteTasks = incompleteTasks);
-    this.todoService.futureTasksSubject.subscribe(futureTasks => {
+    this.todoService.allTasksSubject
+    .pipe(distinctUntilChanged((prev, curr) => {
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }))
+    .subscribe(tasks => this.allTasks = tasks);
+    this.todoService.completedTasksSubject
+    .pipe(distinctUntilChanged((prev, curr) => {
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }))
+    .subscribe((completeTasks: any[]) => this.completedTasks = completeTasks);
+    this.todoService.incompleteTasksSubject
+    .pipe(distinctUntilChanged((prev, curr) => {
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }))
+    .subscribe((incompleteTasks: any[]) => this.incompleteTasks = incompleteTasks);
+    this.todoService.futureTasksSubject
+    .pipe(distinctUntilChanged((prev, curr) =>  {
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }))
+    .subscribe((futureTasks: any[]) => {
       this.futureTasks = futureTasks;
-      // this.disableAnimations = true;
       this.sortFutureTasks();
-      // setTimeout(() => {
-      //   this.disableAnimations = false;
-      // }, 100);
     });
 
     let date = new Date();
@@ -270,5 +283,9 @@ export class TodoListComponent implements OnInit {
   collapse() {
     this.collapsed = !this.collapsed;
     localStorage.setItem( 'collapse', this.collapsed.toString());
+  }
+
+  trackByFn(index: number, item: any): string {
+    return item.id;
   }
 }

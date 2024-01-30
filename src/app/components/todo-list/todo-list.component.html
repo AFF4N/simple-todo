@@ -37,9 +37,9 @@
             [@.disabled]="disableAnimations"
             >
           <div cdkDrag
-            [@slideInOut]="i"
             class="todo-container"
             *ngFor="let task of incompleteTasks; index as i"
+            [@slideInOut]="i"
             (cdkDragStarted)="onDragStarted($event)"
             (cdkDragEnded)="onDragEnded($event, task)"
           >
@@ -97,9 +97,9 @@
           [@.disabled]="disableAnimations"
           >
           <div cdkDrag
-            [@slideInOut]="i"
             class="todo-container"
             *ngFor="let task of completedTasks; index as i"
+            [@slideInOut]="i"
             (cdkDragStarted)="onDragStarted($event)"
             (cdkDragEnded)="onDragEnded($event, task)"
             >
@@ -130,25 +130,26 @@
         <mat-icon class="collapse-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
       </div>
       <div class="todos future-todos" *ngIf="!collapsed" [@slideTopBottom]>
-        <div *ngFor="let tab of futureTasks; index as i">
-          <div cdkDropList
-            *ngIf="tab.tasks.length > 0"
-            class="todoIncomplete example-list"
-            #completedTodos="cdkDropList"
-            (cdkDropListDropped)="drop($event)"
-            [cdkDropListData]="futureTasks"
-            [cdkDropListConnectedTo]="completedTodos"
-            cdkDropListSortingDisabled
-            [@.disabled]="disableAnimations">
-              <div class="todo-label">{{tab.label}}</div>
+        <div *ngFor="let tab of futureTasks; index as i; trackBy: trackByFn">
+          <div cdkDropList class="todoFuture example-list">
+            <div class="todo-label">{{tab.label}}</div>
+            <div class="todo-items"
+              cdkDropList
+              #futureTodos="cdkDropList"
+              (cdkDropListDropped)="drop($event)"
+              [cdkDropListData]="tab.tasks"
+              [cdkDropListConnectedTo]="completedTodos"
+              cdkDropListSortingDisabled
+              [@.disabled]="disableAnimations"
+              >
               <div cdkDrag
                 class="todo-container"
-                [@slideInOut]="i"
-                *ngFor="let task of tab.tasks; index as i"
+                *ngFor="let task of tab.tasks; trackBy: trackByFn"
+                [@slideInOut]="task.id"
                 (cdkDragStarted)="onDragStarted($event)"
                 (cdkDragEnded)="onDragEnded($event, task)">
                 <label class="container">
-                  <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
+                  <input id="todoFuture" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
                   <span class="checkmark"></span>
                 </label>
                 <div class="todo-item" (mouseenter)="task.edit = true" (mouseleave)="task.edit = false">
@@ -180,6 +181,7 @@
                   <div class="todo-note-label">{{(task.dateCreated | date:'MMM d, y, h:mm a') +' • '+ task.note}}</div>
                 </div>
               </div>
+            </div>
             </div>
         </div>
       </div>
