@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Task } from 'src/app/models/task.model';
 import { AddTodoComponent } from '../add-todo/add-todo.component';
@@ -39,7 +39,7 @@ export class TodoListComponent implements OnInit {
   collapsed: boolean = true;
   isOverDelete = false;
 
-  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar, private elementRef: ElementRef) {
+  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
   }
 
