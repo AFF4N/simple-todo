@@ -1,6 +1,6 @@
 <div class="layout">
   <header class="header">
-    <div style="width: 100%;">
+    <div class="date-wrapper">
       <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
       <div class="status">{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
     </div>
@@ -21,8 +21,8 @@
         </button>
       </mat-menu>
     </div>
-    <div class="divider"></div>
   </header>
+  <hr>
   <div class="todos">
     <div class="incomplete-todos">
       <div class="todo-label">Incomplete</div>
@@ -36,12 +36,19 @@
             cdkDropListSortingDisabled
             [@.disabled]="disableAnimations"
             >
+            <div *ngIf="incompleteTasks.length === 0">
+              <div class="todo-item">
+                <div class="todo-item-label todo-item-label_msg">Click on + to add a task</div>
+              </div>
+            </div>
           <div cdkDrag
             class="todo-container"
             *ngFor="let task of incompleteTasks; index as i"
             [@slideInOut]="i"
+            [cdkDragPreviewClass]="'over-delete'"
             (cdkDragStarted)="onDragStarted($event)"
             (cdkDragEnded)="onDragEnded($event, task)"
+            (cdkDragMoved)="onDragMoved($event)"
           >
             <label class="container">
               <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
@@ -76,11 +83,6 @@
               <div class="todo-note-label">{{(task.dateCreated | date:'MMM d, y, h:mm a') +' • '+ task.note}}</div>
             </div>
           </div>
-          <div *ngIf="incompleteTasks.length === 0">
-            <div class="todo-item">
-              <div class="todo-item-label todo-item-label_msg">Click on + to add a task</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -96,12 +98,19 @@
           cdkDropListSortingDisabled
           [@.disabled]="disableAnimations"
           >
+          <div *ngIf="completedTasks.length == 0">
+            <div class="todo-item">
+              <div class="todo-item-label todo-item-label_msg">Mark the task done to get it completed</div>
+            </div>
+          </div>
           <div cdkDrag
             class="todo-container"
             *ngFor="let task of completedTasks; index as i"
             [@slideInOut]="i"
+            [cdkDragPreviewClass]="'over-delete'"
             (cdkDragStarted)="onDragStarted($event)"
             (cdkDragEnded)="onDragEnded($event, task)"
+            (cdkDragMoved)="onDragMoved($event)"
             >
             <label class="container" style="margin: 0;">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
@@ -116,15 +125,11 @@
               </span>
             </div>
           </div>
-          <div *ngIf="completedTasks.length == 0">
-            <div class="todo-item">
-              <div class="todo-item-label todo-item-label_completed">Mark the task done to get it completed</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
-    <div *ngIf="futureTasks.length !== 0" style="border-top: 3px solid #f6f6f6; padding-top: 5px;">
+    <div *ngIf="futureTasks.length !== 0">
+      <hr>
       <div class="todo-item-label todo-item-label_msg todo-item-label_future">
         Plan tomorrow's success right here
         <mat-icon class="collapse-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
@@ -146,8 +151,10 @@
                 class="todo-container"
                 *ngFor="let task of tab.tasks; trackBy: trackByFn"
                 [@slideInOut]="task.id"
+                [cdkDragPreviewClass]="'over-delete'"
                 (cdkDragStarted)="onDragStarted($event)"
-                (cdkDragEnded)="onDragEnded($event, task)">
+                (cdkDragEnded)="onDragEnded($event, task)"
+                (cdkDragMoved)="onDragMoved($event)">
                 <label class="container">
                   <input id="todoFuture" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
                   <span class="checkmark"></span>
@@ -198,7 +205,7 @@
   <div class="delete-wrapper">
     <div style="position: fixed; bottom: 12%;">
       <div *ngIf="deleteBtn" [@slideFromBottom]>
-        <div class="delete-btn drop-receiver" cdkDropList #deleteTodos="cdkDropList" (_drop)="onDelete($event)">
+        <div class="delete-btn drop-receiver" cdkDropList #deleteTodos="cdkDropList" (_hover)="onHoverDelete($event)" (_drop)="onDelete($event)">
           <mat-icon class="dlt-icon">delete</mat-icon>
         </div>
       </div>

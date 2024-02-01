@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Task } from 'src/app/models/task.model';
 import { AddTodoComponent } from '../add-todo/add-todo.component';
@@ -6,7 +6,7 @@ import { ArchivedComponent } from '../archived/archived.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { AboutComponent } from '../about/about.component';
 import { TodoService } from 'src/app/services/todo.service';
-import { CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragMove, CdkDragStart, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { taskAnimations, deleteBtnAnimation, slideTopBottom } from 'src/assets/animations';
 import * as moment from 'moment';
@@ -37,8 +37,9 @@ export class TodoListComponent implements OnInit {
   darkMode: any;
   selectedEmoji: any;
   collapsed: boolean = true;
+  isOverDelete = false;
 
-  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
+  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar, private elementRef: ElementRef) {
     this.getDeviceTheme();
   }
 
@@ -188,10 +189,35 @@ export class TodoListComponent implements OnInit {
     this.deleteBtn = true;
   }
 
+  onDragMoved(event: CdkDragMove) {
+    // Get the current drag position
+    const dragPosition = event.pointerPosition;
+
+    // Get the bounding box of the cdkDrag element
+    const boundingBox = event.source.element.nativeElement.getBoundingClientRect();
+
+    // Calculate the mouse position relative to the bounding box
+    const mouseX = dragPosition.x - boundingBox.left - 14000;
+    const mouseY = dragPosition.y - boundingBox.top;
+
+    // Log or use the mouseX and mouseY values as needed
+    // console.log('Mouse X:', mouseX, 'Mouse Y:', mouseY);
+
+    const dropPointElement = document.elementFromPoint(mouseX, mouseY);
+    if (dropPointElement) {
+      const dropReceiver = dropPointElement.closest('.drop-receiver');
+      if (dropReceiver) {
+        const dropEvent = new CustomEvent('_hover');
+        dropReceiver.dispatchEvent(dropEvent);
+      }
+    }
+  }
+
   onDragEnded(event: CdkDragEnd, task: any) {
     // console.log('Dragging ended:', event);
     // console.log('task:', task);
     this.deleteBtn = false
+    this.isOverDelete = false;
     this.disableAnimations = true;
     const dropPointElement = document.elementFromPoint(event.dropPoint.x, event.dropPoint.y);
     if (dropPointElement) {
@@ -204,6 +230,11 @@ export class TodoListComponent implements OnInit {
     setTimeout(() => {
       this.disableAnimations = false;
     }, 100);
+  }
+
+  onHoverDelete(event: any) {
+    this.isOverDelete = true;
+    // console.log('hovering on delete!');
   }
 
   drop(event: CdkDragDrop<Task[]>) {

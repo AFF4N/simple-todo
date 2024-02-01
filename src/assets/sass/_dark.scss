@@ -4,31 +4,13 @@ body.dark-mode {
   background-color: $color-bg-darkmode;
   color: $color-primary-darkmode;
 
-  --mdc-outlined-text-field-hover-outline-color: #2C2C2D;
-  --mdc-outlined-text-field-outline-color: #3e3e3e;
-  --mdc-outlined-text-field-focus-outline-color: rgb(163, 152, 120);
-  --mdc-outlined-text-field-input-text-placeholder-color: #424242;
-  --mdc-outlined-text-field-caret-color: #747474;
-
-  .mat-bottom-sheet-container {
-    background-color: #181818;
-  }
-
-  .mat-mdc-menu-content{
-    background-color: #2c2c2d;
-  }
-
-  .mat-mdc-menu-item-text, .mat-icon{
-    color: #ffffff8a !important;
-  }
-
   h3, h4, h5, h6, a {
     color: white !important;
   }
 
-  .divider{
-    background: #575767;
-    border-bottom: #575767;
+  hr {
+    border-color: #575767;
+    opacity: 0.2;
   }
 
   .heading-desc{
@@ -49,15 +31,17 @@ body.dark-mode {
     border-color: #424242;;
   }
   .submit-btn{
-    background-color: #f5f5f7;
-    color: #161616;
+    background-color: #3F4EA0;
+    color: #F0F0F1;
   }
-  .submit-btn:hover{
-    text-decoration: none;
-    background-color: #a39878;
-    box-shadow: #00000033 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px;
+  .submit-btn:active {
+    background-color: #3F4EA0;
+    border-color: #3F4EA0;
+    color: #a3a3a3;
+   }
+   .submit-btn:focus-visible {
+    outline: auto 1px #3F4EA0;
   }
-
   .btn-primary {
     &:hover{
       background-color: #a7a7a7;
@@ -113,22 +97,6 @@ body.dark-mode {
     color: #DADADA;
   }
 
-  .mat-mdc-form-field, .mat-mdc-form-field-type-mat-input, .matform-field-appearance-outline, .mat-form-field-hide-placeholder {
-    color: red;
-  }
-
-  .mat-mdc-floating-label{
-    color: #979797 !important;
-  }
-
-  .mdc-text-field--outlined, .mdc-text-field__input{
-    color: #979797 !important;
-  }
-
-  .mat-mdc-input-element{
-    color: #979797 !important;
-  }
-
   .checkmark{
     border: 2px #0E0E11 solid;
     background: linear-gradient(180deg, #2B2D37 0%, #262933 100%);
@@ -168,20 +136,108 @@ body.dark-mode {
     color: #ffe2e2;
   }
 
-  .footer-text{
-    border-color: #575767;
+  // .calendar-icon{
+  //   &-label{
+  //     background: #c3c3c3;
+  //     color: #2d2d2d;
+  //     // background: #656565;
+  //     // color: #c6c6c6;
+  //   }
+  //   &-head{
+  //     border-bottom: 1px solid #2d2d2d;
+  //   }
+  // }
+  .calendar-label-mobile-item {
+    color: #fff;
   }
 
+
+  // Angular Material library custom-css changes
+
+  // mat-datepicker dark theme
+  --mat-datepicker-calendar-container-background-color: #242424;
+  --mat-datepicker-calendar-date-today-selected-state-outline-color: black;
+  --mat-datepicker-calendar-body-label-text-color: rgb(255 255 255 / 54%);
+  --mat-datepicker-calendar-period-button-icon-color: rgb(255 255 255 / 54%);
+  --mat-datepicker-calendar-navigation-button-icon-color: rgb(255 255 255 / 54%);
+  --mat-datepicker-calendar-header-divider-color: rgb(255 255 255 / 12%);
+  --mat-datepicker-calendar-header-text-color: rgb(255 255 255 / 54%);
+  --mat-datepicker-calendar-date-today-outline-color: rgb(255 255 255 / 38%);
+  --mat-datepicker-calendar-date-today-disabled-state-outline-color: rgb(255 255 255 / 18%);
+  --mat-datepicker-calendar-date-text-color: rgb(255 255 255 / 87%);
+  --mat-datepicker-calendar-date-outline-color: transparent;
+  --mat-datepicker-calendar-date-disabled-state-text-color: rgb(255 255 255 / 38%);
+  --mat-datepicker-calendar-date-preview-state-outline-color: rgb(255 255 255 / 24%);
+  --mat-datepicker-range-input-separator-color: rgb(255 255 255 / 87%);
+  --mat-datepicker-range-input-disabled-state-separator-color: rgb(255 255 255 / 38%);
+  --mat-datepicker-range-input-disabled-state-text-color: rgb(255 255 255 / 38%);
+  --mat-datepicker-calendar-container-text-color: rgb(255 255 255 / 87%);
+
+  .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+    background-color: #424242 !important;
+  }
+  .mat-mdc-button.mat-unthemed {
+    --mdc-text-button-label-text-color: rgb(255 255 255 / 54%);
+  }
+
+  // mat-bottom-sheet
+  .mat-bottom-sheet-container {
+    background-color: #181818;
+  }
+  .mat-mdc-menu-content{
+    background-color: #2c2c2d;
+  }
+
+  // mat-icons
+  .mat-mdc-menu-item-text, .mat-icon{
+    color: #ffffff8a !important;
+  }
+  .mat-icon{
+    &:hover{
+      background-color: #464646;
+    }
+  }
+
+  // mat-forms
+  --mdc-outlined-text-field-hover-outline-color: #2C2C2D;
+  --mdc-outlined-text-field-outline-color: #3e3e3e;
+  --mdc-outlined-text-field-focus-outline-color: #747474 ; // #a39878
+  --mdc-outlined-text-field-input-text-placeholder-color: #424242;
+  --mdc-outlined-text-field-caret-color: #747474;
+
+  .mat-mdc-form-field, .mat-mdc-form-field-type-mat-input, .matform-field-appearance-outline, .mat-form-field-hide-placeholder {
+    color: red;
+  }
+  .mat-mdc-floating-label{
+    color: #747474 !important;
+  }
+  .mdc-text-field--outlined, .mdc-text-field__input{
+    color: #747474 !important;
+  }
+  .mat-mdc-input-element{
+    color: #979797 !important;
+  }
+
+  // mat-snackbar
   .mat-mdc-snack-bar-container .mdc-snackbar__surface{
     background-color: var(--mdc-snackbar-container-color) !important;
   }
   .mat-mdc-snack-bar-container .mdc-snackbar__label {
     color: var(--mdc-snackbar-supporting-text-color) !important;
   }
-  // .mdc-button .mdc-button__label{
-  //   color: var(--mdc-snackbar-supporting-text-color) !important;
-  // }
   .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
     color: var(--mdc-snackbar-supporting-text-color) !important;
+  }
+
+  // mat-chips
+  .mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary, .mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
+    --mdc-chip-elevated-container-color: #cdcdcd;
+    --mdc-chip-label-text-color: black;
+    // border: 1px solid #00000082;
+    // box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+  .mat-mdc-standard-chip{
+    --mdc-chip-elevated-container-color: #242424;
+    --mdc-chip-label-text-color: #d3d3d3;
   }
 }

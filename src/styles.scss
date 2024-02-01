@@ -64,6 +64,13 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+hr{
+  width: 100%;
+  border-top: 2px solid #D0D0D0;
+  border-radius: 5px;
+  opacity: 0.5;
+}
+
 .dark-mode {
   --scrollbar-track-color: #333;
   --scrollbar-thumb-color: #414141;
@@ -82,6 +89,13 @@ a {
   background-color: var(--scrollbar-thumb-color);
 }
 
+.mat-icon{
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  &:hover{
+    background-color: #f8f8f8;
+  }
+}
 .mat-bottom-sheet-container {
   padding: 8px 16px;
   min-width: 100vw !important;
@@ -108,11 +122,23 @@ a {
   background-color: #fff !important;
   margin-top: 5%;
 }
+.mat-calendar-body-today {
+  border-color: #3F4EA0 !important;
+}
+.mat-calendar-body-selected {
+  background-color: #3F4EA0 !important;
+}
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+  background-color: #a0a0a0  !important;
+}
+.mat-mdc-icon-button {
+  --mdc-icon-button-icon-color: #616161;
+}
 .mat-mdc-snack-bar-container .mdc-snackbar__label {
-  color: #424242 !important;
+  color: #181818 !important;
 }
 .mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
-  color: #424242 !important;
+  color: #181818 !important;
 }
 .mat-mdc-menu-panel{
   max-width: 100% !important;
@@ -132,15 +158,5 @@ a {
   display: none;
 }
 .mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary, .mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
-  --mdc-chip-disabled-label-text-color: white;
-  --mdc-chip-elevated-container-color: #000;
-  --mdc-chip-elevated-disabled-container-color: #000;
-  --mdc-chip-focus-state-layer-color: black;
-  --mdc-chip-focus-state-layer-opacity: 0.12;
-  --mdc-chip-label-text-color: white;
-  --mdc-chip-with-icon-icon-color: white;
-  --mdc-chip-with-icon-disabled-icon-color: white;
-  --mdc-chip-with-icon-selected-icon-color: white;
-  --mdc-chip-with-trailing-icon-disabled-trailing-icon-color: white;
-  --mdc-chip-with-trailing-icon-trailing-icon-color: white;
+--mdc-chip-elevated-container-color: #1d1d1f;
 }

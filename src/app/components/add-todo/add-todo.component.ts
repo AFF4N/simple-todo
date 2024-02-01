@@ -202,7 +202,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     } else {
       emoji = this.selectedEmoji;
     }
-    if(!this.editMode){
+    if(!this.editMode){ // New Task
       const todo = {
         id: uuidv4(),
         name: this.todoForm.value.name,
@@ -216,8 +216,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       }
       if(this.validateTask(todo)){
         this.todoService.addTask(todo);
+        this.bottomSheet.dismiss();
       }
-    } else {
+    } else { // Edit Mode
       const todo = {
         id: this.todoData.id,
         name: this.todoForm.value.name,
@@ -227,13 +228,12 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         archived: this.todoData.archived,
         dateCreated: this.calculateDate(),
         type: this.taskType
-        // dateCreated: 'Sun Aug 25 2023'
       }
       if(this.validateTask(todo)){
         this.todoService.updateTask(todo);
+        this.bottomSheet.dismiss();
       }
     }
-    this.bottomSheet.dismiss();
   }
 
   calculateDate() {
