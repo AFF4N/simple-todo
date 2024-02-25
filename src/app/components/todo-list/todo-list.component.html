@@ -4,7 +4,7 @@
       <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
       <div class="status">{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
     </div>
-    <div style="-webkit-tap-highlight-color: transparent;">
+    <div class="menu" style="-webkit-tap-highlight-color: transparent;">
       <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">more_vert</mat-icon>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="openArchives()">
@@ -38,7 +38,7 @@
             >
             <div *ngIf="incompleteTasks.length === 0">
               <div class="todo-item">
-                <div class="todo-item-label todo-item-label_msg">Click on + to add a task</div>
+                <div class="todo-item-label todo-item-label_msg">Click <span style="font-size: large;">+</span> to add a task</div>
               </div>
             </div>
           <div cdkDrag
@@ -50,37 +50,44 @@
             (cdkDragEnded)="onDragEnded($event, task)"
             (cdkDragMoved)="onDragMoved($event)"
           >
-            <label class="container">
+            <label class="container no-select">
               <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
             </label>
             <div class="todo-item" (mouseenter)="task.edit = true" (mouseleave)="task.edit = false">
-              <span style="display: flex; gap: 5px; align-items: center;">
-                <div class="todo-item-emoji">
-                  <div class="emojis">
-                    <button title="Change Emoji" class="emoji-btn" (click)="toggleElement(i)" [matMenuTriggerFor]="emojiMenu">
-                      <ngx-emoji [isNative]="true" [emoji]="task.emoji" [size]="16"></ngx-emoji>
-                    </button>
-                  </div>
-                  <mat-menu #emojiMenu="matMenu">
-                    <div (click)="$event.stopPropagation()">
-                      <emoji-mart [id]="i"
-                        [showPreview]="false"
-                        [isNative]="true"
-                        [darkMode]="darkMode"
-                        color="#4249a0"
-                        class="emoji-popup"
-                        (emojiSelect)="select($event, task)"
-                      ></emoji-mart>
+              <div class="todo-item-title">
+                <span style="display: flex; gap: 5px; align-items: center;">
+                  <div class="todo-item-emoji">
+                    <div class="emojis">
+                      <button title="Change Emoji" class="emoji-btn" (click)="toggleElement(i)" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="emojiMenu">
+                        <ngx-emoji [isNative]="true" [emoji]="task.emoji" [size]="16"></ngx-emoji>
+                      </button>
                     </div>
-                  </mat-menu>
+                    <mat-menu #emojiMenu="matMenu">
+                      <div (click)="$event.stopPropagation()">
+                        <emoji-mart [id]="i"
+                          [showPreview]="false"
+                          [isNative]="true"
+                          [darkMode]="darkMode"
+                          color="#4249a0"
+                          class="emoji-popup"
+                          (emojiSelect)="select($event, task); menuTrigger.closeMenu()"
+                        ></emoji-mart>
+                      </div>
+                    </mat-menu>
+                  </div>
+                  <div class="todo-item-label">{{task.name}}</div>
+                  <div style="margin-left: 5px;" *ngIf="task.edit">
+                    <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)">edit</mat-icon>
+                  </div>
+                </span>
+                <div class="todo-item-date">
+                  <div class="date-text">{{task.dateCreated | date:'MMM d'}}</div>
+                  <!-- <div class="date-text">{{task.dateCreated | date:'MMM d, y'}}</div> -->
+                  <!-- <div class="date-text">{{task.dateCreated | date:'h:mm a'}}</div> -->
                 </div>
-                <div class="todo-item-label">{{task.name}}</div>
-                <div style="margin-left: 5px;" *ngIf="task.edit">
-                  <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)" >edit</mat-icon>
-                </div>
-              </span>
-              <div class="todo-note-label">{{(task.dateCreated | date:'MMM d, y, h:mm a') +' • '+ task.note}}</div>
+              </div>
+              <div class="todo-note-label">{{task.note}}</div>
             </div>
           </div>
         </div>
@@ -100,7 +107,7 @@
           >
           <div *ngIf="completedTasks.length == 0">
             <div class="todo-item">
-              <div class="todo-item-label todo-item-label_msg">Mark the task done to get it completed</div>
+              <div class="todo-item-label todo-item-label_msg">Mark a task done to get it completed</div>
             </div>
           </div>
           <div cdkDrag
@@ -112,7 +119,7 @@
             (cdkDragEnded)="onDragEnded($event, task)"
             (cdkDragMoved)="onDragMoved($event)"
             >
-            <label class="container" style="margin: 0;">
+            <label class="container no-select" style="margin: 0;">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
             </label>
@@ -134,7 +141,7 @@
         Plan tomorrow's success right here
         <mat-icon class="collapse-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
       </div>
-      <div class="todos future-todos" *ngIf="!collapsed" [@slideTopBottom]>
+      <div class="future-todos" *ngIf="!collapsed" [@slideTopBottom]>
         <div *ngFor="let tab of futureTasks; index as i; trackBy: trackByFn">
           <div cdkDropList class="todoFuture example-list">
             <div class="todo-label">{{tab.label}}</div>
@@ -155,37 +162,42 @@
                 (cdkDragStarted)="onDragStarted($event)"
                 (cdkDragEnded)="onDragEnded($event, task)"
                 (cdkDragMoved)="onDragMoved($event)">
-                <label class="container">
+                <label class="container no-select">
                   <input id="todoFuture" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
                   <span class="checkmark"></span>
                 </label>
                 <div class="todo-item" (mouseenter)="task.edit = true" (mouseleave)="task.edit = false">
-                  <span style="display: flex; gap: 5px; align-items: center;">
-                    <div class="todo-item-emoji">
-                      <div class="emojis">
-                        <button title="Change Emoji" class="emoji-btn" (click)="toggleElement(i)" [matMenuTriggerFor]="emojiMenu">
-                          <ngx-emoji [isNative]="true" [emoji]="task.emoji" [size]="16"></ngx-emoji>
-                        </button>
-                      </div>
-                      <mat-menu #emojiMenu="matMenu">
-                        <div (click)="$event.stopPropagation()">
-                          <emoji-mart [id]="i"
-                            [showPreview]="false"
-                            [isNative]="true"
-                            [darkMode]="darkMode"
-                            color="#4249a0"
-                            class="emoji-popup"
-                            (emojiSelect)="select($event, task)">
-                          </emoji-mart>
+                  <div class="todo-item-title">
+                    <span style="display: flex; gap: 5px; align-items: center;">
+                      <div class="todo-item-emoji">
+                        <div class="emojis">
+                          <button title="Change Emoji" class="emoji-btn" (click)="toggleElement(i)" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="emojiMenu">
+                            <ngx-emoji [isNative]="true" [emoji]="task.emoji" [size]="16"></ngx-emoji>
+                          </button>
                         </div>
-                      </mat-menu>
+                        <mat-menu #emojiMenu="matMenu">
+                          <div (click)="$event.stopPropagation()">
+                            <emoji-mart [id]="i"
+                              [showPreview]="false"
+                              [isNative]="true"
+                              [darkMode]="darkMode"
+                              color="#4249a0"
+                              class="emoji-popup"
+                              (emojiSelect)="select($event, task); menuTrigger.closeMenu()">
+                            </emoji-mart>
+                          </div>
+                        </mat-menu>
+                      </div>
+                      <div class="todo-item-label">{{task.name}}</div>
+                      <div style="margin-left: 5px;" *ngIf="task.edit">
+                        <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)" >edit</mat-icon>
+                      </div>
+                    </span>
+                    <div class="todo-item-date">
+                      <div class="date-text">{{task.dateCreated | date:'MMM d'}}</div>
                     </div>
-                    <div class="todo-item-label">{{task.name}}</div>
-                    <div style="margin-left: 5px;" *ngIf="task.edit">
-                      <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)" >edit</mat-icon>
-                    </div>
-                  </span>
-                  <div class="todo-note-label">{{(task.dateCreated | date:'MMM d, y, h:mm a') +' • '+ task.note}}</div>
+                  </div>
+                  <div class="todo-note-label">{{task.note}}</div>
                 </div>
               </div>
             </div>

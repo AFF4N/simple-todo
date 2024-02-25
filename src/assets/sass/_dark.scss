@@ -70,6 +70,10 @@ body.dark-mode {
     background: #2C2C2D;
   }
 
+  .todo-item-date{
+    color: #7b7b7b;
+  }
+
   .todo-item-label{
     color: #DADADA;
     &_msg {
@@ -237,7 +241,7 @@ body.dark-mode {
     // box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   }
   .mat-mdc-standard-chip{
-    --mdc-chip-elevated-container-color: #242424;
+    --mdc-chip-elevated-container-color: #2b2b2b;
     --mdc-chip-label-text-color: #d3d3d3;
   }
 }
