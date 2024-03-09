@@ -106,6 +106,7 @@ hr.rounded {
   width: 100%;
   background-color: white;
   display: inline-flex;
+  // transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .checkbox {
@@ -245,32 +246,83 @@ hr.rounded {
 }
 
 .delete-btn {
-  cursor: pointer;
-  background-color: #f33c5c;
-  // position: fixed;
-  -webkit-tap-highlight-color: transparent;
-  height: 56px;
   width: 56px;
-  border: 2px solid #fe6d86;
-  text-align: center;
+  height: 56px;
   border-radius: 50%;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  z-index: 1000;
-  &:hover {
-    background-color: #ff6b85 !important;
-  }
+  background-color: rgb(20, 20, 20);
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  cursor: grab;
+  transition-duration: .3s;
+  overflow: hidden;
+  position: relative;
 }
 
-.dlt-icon {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 56px;
-  width: 56px;
+.svgIcon {
+  width: 12px;
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.delete-btn:hover{
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: .3s;
+  background-color: rgb(255, 69, 69);
+  align-items: center;
+}
+
+.delete-btn:hover .svgIcon {
+  width: 50px;
+  transition-duration: .3s;
+  transform: translateY(60%);
+}
+
+.delete-btn::before {
+  position: absolute;
+  top: -20px;
+  content: "Delete";
   color: white;
-  &:hover {
-    background-color: #ff6b85 !important;
-  }
+  transition-duration: .3s;
+  font-size: 2px;
+}
+
+.delete-btn:hover::before{
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+  transition-duration: .3s;
+}
+
+.delete-btn.hovered {
+  width: 140px;
+  border-radius: 50px;
+  background-color: rgb(255, 69, 69);
+  align-items: center;
+}
+
+.delete-btn.hovered .svgIcon {
+  width: 50px;
+  transition-duration: .3s;
+  transform: translateY(60%);
+}
+
+.delete-btn.hovered::before {
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+  transition-duration: .3s;
+}
+
+.dragging {
+  cursor: grabbing;
 }
 
 .over-delete {
@@ -377,6 +429,10 @@ label.container:focus-visible {
   overflow: hidden;
 }
 
+.example-list:active {
+  cursor: grabbing;
+}
+
 .example-box {
   padding: 20px 10px;
   border-bottom: solid 1px #ccc;
@@ -389,6 +445,16 @@ label.container:focus-visible {
   cursor: move;
   background: white;
   font-size: 14px;
+}
+
+.drag-handle{
+  cursor: grab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: grey;
+  margin-top: 5px;
+  font-size: 18px;
 }
 
 .cdk-drag-preview {
@@ -450,7 +516,11 @@ label.container:focus-visible {
 
 @media (min-width: 1200px) {
   .date-wrapper{
-    padding: 0px 80px 12px;
+    padding: 0px 12px;
+  }
+  .add-wrapper {
+    right: 64px;
+    bottom: 72px;
   }
 }
 

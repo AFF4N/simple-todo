@@ -187,6 +187,7 @@ export class TodoListComponent implements OnInit {
   onDragStarted(event: CdkDragStart) {
     // console.log('Dragging started:', event);
     this.deleteBtn = true;
+    document.getElementById('layout').classList.add('dragging');
   }
 
   onDragMoved(event: CdkDragMove) {
@@ -209,6 +210,9 @@ export class TodoListComponent implements OnInit {
       if (dropReceiver) {
         const dropEvent = new CustomEvent('_hover');
         dropReceiver.dispatchEvent(dropEvent);
+        document.getElementById('delete-btn').classList.add('hovered');
+      } else {
+        document.getElementById('delete-btn').classList.remove('hovered');
       }
     }
   }
@@ -219,6 +223,7 @@ export class TodoListComponent implements OnInit {
     this.deleteBtn = false
     this.isOverDelete = false;
     this.disableAnimations = true;
+    document.getElementById('layout').classList.remove('dragging');
     const dropPointElement = document.elementFromPoint(event.dropPoint.x, event.dropPoint.y);
     if (dropPointElement) {
       const dropReceiver = dropPointElement.closest('.drop-receiver');
@@ -248,13 +253,13 @@ export class TodoListComponent implements OnInit {
         event.currentIndex,
       );
     }
-    // console.log('event.container:', event.container)
-    this.incompleteTasks.forEach(task => task.checked = false);
-    // console.log('Incomplete Tasks:', this.incompleteTasks);
-    this.completedTasks.forEach(task => task.checked = true);
-    // console.log('Completed Tasks:', this.completedTasks);
-    this.todoService.updateStatusArrays();
-    this.todoService.saveTasksToLocalStorage();
+    // // console.log('event.container:', event.container)
+    // this.incompleteTasks.forEach(task => task.checked = false);
+    // // console.log('Incomplete Tasks:', this.incompleteTasks);
+    // this.completedTasks.forEach(task => task.checked = true);
+    // // console.log('Completed Tasks:', this.completedTasks);
+    // this.todoService.saveTasksToLocalStorage();
+    // this.todoService.updateStatusArrays();
   }
 
   undoDelete() {

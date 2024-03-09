@@ -1,4 +1,4 @@
-<div class="layout">
+<div class="layout" id="layout">
   <header class="header">
     <div class="date-wrapper">
       <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
@@ -32,7 +32,6 @@
             #incompleteTodos="cdkDropList"
             (cdkDropListDropped)="drop($event)"
             [cdkDropListData]="incompleteTasks"
-            [cdkDropListConnectedTo]="completedTodos"
             cdkDropListSortingDisabled
             [@.disabled]="disableAnimations"
             >
@@ -50,6 +49,7 @@
             (cdkDragEnded)="onDragEnded($event, task)"
             (cdkDragMoved)="onDragMoved($event)"
           >
+            <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
             <label class="container no-select">
               <input id="todoIncomplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
@@ -78,7 +78,7 @@
                   </div>
                   <div class="todo-item-label">{{task.name}}</div>
                   <div style="margin-left: 5px;" *ngIf="task.edit">
-                    <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)">edit</mat-icon>
+                    <mat-icon class="flex-center edit-icon no-select" title="Edit" (click)="editTask(task)">edit</mat-icon>
                   </div>
                 </span>
                 <div class="todo-item-date">
@@ -101,7 +101,6 @@
           #completedTodos="cdkDropList"
           (cdkDropListDropped)="drop($event)"
           [cdkDropListData]="completedTasks"
-          [cdkDropListConnectedTo]="incompleteTodos"
           cdkDropListSortingDisabled
           [@.disabled]="disableAnimations"
           >
@@ -119,6 +118,7 @@
             (cdkDragEnded)="onDragEnded($event, task)"
             (cdkDragMoved)="onDragMoved($event)"
             >
+            <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
             <label class="container no-select" style="margin: 0;">
               <input id="todoComplete" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
               <span class="checkmark"></span>
@@ -127,7 +127,7 @@
               <span style="display: flex; gap: 5px; align-items: center;">
                 <div class="todo-item-label todo-item-label_completed">{{task.name}}</div>
                 <div style="margin-left: 5px;" *ngIf="task.edit">
-                  <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)" >edit</mat-icon>
+                  <mat-icon class="flex-center edit-icon no-select" title="Edit" (click)="editTask(task)" >edit</mat-icon>
                 </div>
               </span>
             </div>
@@ -150,7 +150,6 @@
               #futureTodos="cdkDropList"
               (cdkDropListDropped)="drop($event)"
               [cdkDropListData]="tab.tasks"
-              [cdkDropListConnectedTo]="completedTodos"
               cdkDropListSortingDisabled
               [@.disabled]="disableAnimations"
               >
@@ -162,6 +161,7 @@
                 (cdkDragStarted)="onDragStarted($event)"
                 (cdkDragEnded)="onDragEnded($event, task)"
                 (cdkDragMoved)="onDragMoved($event)">
+                <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
                 <label class="container no-select">
                   <input id="todoFuture" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
                   <span class="checkmark"></span>
@@ -190,7 +190,7 @@
                       </div>
                       <div class="todo-item-label">{{task.name}}</div>
                       <div style="margin-left: 5px;" *ngIf="task.edit">
-                        <mat-icon class="flex-center edit-icon" title="Edit" (click)="editTask(task)" >edit</mat-icon>
+                        <mat-icon class="flex-center edit-icon no-select" title="Edit" (click)="editTask(task)" >edit</mat-icon>
                       </div>
                     </span>
                     <div class="todo-item-date">
@@ -217,9 +217,9 @@
   <div class="delete-wrapper">
     <div style="position: fixed; bottom: 12%;">
       <div *ngIf="deleteBtn" [@slideFromBottom]>
-        <div class="delete-btn drop-receiver" cdkDropList #deleteTodos="cdkDropList" (_hover)="onHoverDelete($event)" (_drop)="onDelete($event)">
-          <mat-icon class="dlt-icon">delete</mat-icon>
-        </div>
+        <button id="delete-btn" class="delete-btn drop-receiver" cdkDropList #deleteTodos="cdkDropList" (_hover)="onHoverDelete($event)" (_drop)="onDelete($event)">
+          <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+        </button>
       </div>
     </div>
   </div>
