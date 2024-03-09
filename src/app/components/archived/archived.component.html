@@ -9,20 +9,27 @@
           <div class="archived-date">
             <div class="date-label">{{ task.date | date:'longDate'}}</div>
             <span (click)="deleteArchives(task)">
-              <mat-icon class="flex-center dlt-icon">delete</mat-icon>
+              <mat-icon class="flex-center dlt-icon no-select">delete</mat-icon>
             </span>
           </div>
           <div class="archived-todos">
             <div class="archived-items">
               <div class="todoIncomplete">
-                <div class="archived-container" *ngFor="let task of groupedTasks[task.date] ; let last = last">
+                <div style="width: 100%;" *ngFor="let task of groupedTasks[task.date] ; let last = last">
                   <!-- <label class="container">
                     <input id="todoIncomplete" type="checkbox" [checked]="task.checked">
                     <span class="checkmark"></span>
                   </label> -->
-                  <div class="todo-item">
-                    <div class="todo-item-label">{{task.emoji.native +' '+ task.name}}</div>
-                    <div class="todo-note-label">{{task.note}}</div>
+                  <div class="archived-container">
+                    <div class="todo-item">
+                      <div class="todo-detail">
+                        <div class="todo-item-label">{{task.emoji.native +' '+ task.name}}</div>
+                        <div class="todo-note-label">{{task.note}}</div>
+                      </div>
+                      <div class="restore-icon no-select" title="Restore" (click)="restoreTask(task)">
+                        <mat-icon>restore</mat-icon>
+                      </div>
+                    </div>
                     <hr [ngClass]="{'divider': last}">
                   </div>
                 </div>

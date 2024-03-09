@@ -61,7 +61,14 @@ export class SettingsComponent implements OnInit {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
       width: '420px',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false,
+      data: {
+        type: 'ALERT',
+        label: `Delete Tasks`,
+        message: `Are you sure you want to delete all tasks? This operation cannot be undone.`,
+        btnLabelYes: `Yes, Delete them`,
+        btnLabelNo: `No, Keep them`,
+      }
     })
     confirmDialog.afterClosed().subscribe(result => {
       if(result === true) {

@@ -26,22 +26,27 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   clockInterval: any;
   minDate: Date;
   taskType: any;
+  objTask: Task;
   editMode: boolean;
+  restoreMode: boolean;
   headerLabel: string = '';
   headerDesc: string = '';
   btnLabel: string = '';
 
   constructor(
-    @Inject(MAT_BOTTOM_SHEET_DATA) public todoData: Task,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private bottomSheet: MatBottomSheet,
     private todoService: TodoService,
     private snackBar: MatSnackBar
   ) {
-    console.log(todoData);
-    if(todoData !== null) {
-      this.editMode = true;
+    console.log(data);
+    if(data !== null) {
+      this.objTask = data.task;
+      this.editMode = data.editMode;
+      this.restoreMode = data.restoreMode;
     } else {
       this.editMode = false;
+      this.restoreMode = false;
     }
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
@@ -58,26 +63,36 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       time: new FormControl(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })),
       scheduleSelect: new FormControl('Today'),
     })
-    if(this.editMode == false) {
+    if(this.restoreMode) {
+      this.headerLabel = 'Restore task from archives 📂';
+      this.headerDesc = 'Give life back to a task from the past!';
+      this.btnLabel = 'Restore Task';
+      this.objTask.archived = false;
+      this.patchFormData();
+    } else if (this.editMode) {
+      this.headerLabel = 'Edit your task 🖊️';
+      this.headerDesc = 'Make it even better! Update the details of your task.';
+      this.btnLabel = 'Save Changes';
+      this.patchFormData();
+    } else {
       this.headerLabel = 'What tasks we got today? 🤔';
       this.headerDesc = 'Add a dash of productivity to your day';
       this.btnLabel = 'Add Task';
-    } else {
-      this.headerLabel = 'Edit Your Task 🖊️';
-      this.headerDesc = 'Make it even better! Update the details of your task.';
-      this.btnLabel = 'Save Changes';
-      this.todoForm.get('name').patchValue(this.todoData.name);
-      this.todoForm.get('note').patchValue(this.todoData.note);
-      this.selectedEmoji = this.todoData.emoji;
-      this.todoForm.get('date').patchValue(new Date(this.todoData.dateCreated));
-      this.todoForm.get('time').patchValue(new Date(this.todoData.dateCreated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
-      this.todoForm.get('scheduleSelect').patchValue('Date and Time');
-      this.selectedChip = 'Date and Time'
-      this.date = true;
-      this.time = true;
-      this.clearClockInterval();
     }
     this.calculateDate();
+  }
+
+  patchFormData() {
+    this.todoForm.get('name').patchValue(this.objTask.name);
+    this.todoForm.get('note').patchValue(this.objTask.note);
+    this.selectedEmoji = this.objTask.emoji;
+    this.todoForm.get('date').patchValue(new Date(this.objTask.dateCreated));
+    this.todoForm.get('time').patchValue(new Date(this.objTask.dateCreated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
+    this.todoForm.get('scheduleSelect').patchValue('Date and Time');
+    this.selectedChip = 'Date and Time'
+    this.date = true;
+    this.time = true;
+    this.clearClockInterval();
   }
 
   toggleElement() {
@@ -139,7 +154,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       if(this.selectedChip == 3){
         this.todoForm.get('scheduleSelect').patchValue('Date and Time')
         this.clockInterval = setInterval(() => {
-          if(!this.editMode){
+          if(!this.editMode && !this.restoreMode){
             this.updateTime();
           }
         }, 1000);
@@ -202,7 +217,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     } else {
       emoji = this.selectedEmoji;
     }
-    if(!this.editMode){ // New Task
+    if(!this.editMode && !this.restoreMode){ // New Task
       const todo = {
         id: uuidv4(),
         name: this.todoForm.value.name,
@@ -211,21 +226,21 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         checked: false,
         archived: false,
         dateCreated: this.calculateDate(),
+        // dateCreated: 'Sun Aug 25 2023 23:59:00 GMT+0500 (Pakistan Standard Time)', // testing archived dates
         type: this.taskType
-        // dateCreated: 'Sun Aug 25 2023'
       }
       if(this.validateTask(todo)){
         this.todoService.addTask(todo);
         this.bottomSheet.dismiss();
       }
-    } else { // Edit Mode
+    } else { // Edit or Restore Mode
       const todo = {
-        id: this.todoData.id,
+        id: this.objTask.id,
         name: this.todoForm.value.name,
         note: this.todoForm.value.note,
         emoji: emoji,
-        checked: this.todoData.checked,
-        archived: this.todoData.archived,
+        checked: this.objTask.checked,
+        archived: this.objTask.archived,
         dateCreated: this.calculateDate(),
         type: this.taskType
       }
@@ -296,9 +311,13 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     return date;
   }
 
-  validateTask(todo: any) {
+  validateTask(todo: Task) {
     if(todo.name == '') {
-      this.snackBar.open('Add a Task!', 'OK', {duration: 2000, verticalPosition: 'top'});
+      this.snackBar.open("Task name can't be blank. Give it some love! 🚀", 'OK', {duration: 2000, verticalPosition: 'top'});
+      return false;
+    }
+    if(new Date(todo.dateCreated) < new Date()){
+      this.snackBar.open("Tasks cannot be scheduled in the past! ⌚", 'OK', {duration: 2000, verticalPosition: 'top'});
       return false;
     }
     return true;

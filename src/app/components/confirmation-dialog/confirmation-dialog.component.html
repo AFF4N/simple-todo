@@ -1,13 +1,13 @@
-<div class="notif-container">
+<div *ngIf="data.type == 'ALERT'" class="notif-container">
   <div class="header">
     <mat-icon class="icon">delete</mat-icon>
-    <label class="title">Delete Tasks</label>
+    <label class="title">{{data.label}}</label>
   </div>
   <div class="action-buttons">
-    <p class="description">Are you sure you want to delete all tasks? This operation cannot be undone.</p>
+    <p class="description">{{data.message}}</p>
     <span style="padding: 0px 10px 24px 10px;">
-      <button mat-button class="btn btn-no" (click)="onClickNo()">No, Keep them</button>
-      <button mat-button class=" btn btn-yes" (click)="onClickYes()">Yes, Delete them</button>
+      <button mat-button class="btn btn-no" (click)="onClickNo()">{{data.btnLabelNo}}</button>
+      <button mat-button class=" btn btn-yes" (click)="onClickYes()">{{data.btnLabelYes}}</button>
     </span>
   </div>
 </div>

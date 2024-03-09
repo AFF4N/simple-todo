@@ -17,6 +17,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatDateFormats, DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DatePipe } from '@angular/common';
 
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -56,6 +57,7 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     })
   ],
   providers: [
+    DatePipe,
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,

@@ -5,6 +5,8 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { MatDialog } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Subscription } from 'rxjs';
+import { AddTodoComponent } from '../add-todo/add-todo.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-archived',
@@ -19,7 +21,7 @@ export class ArchivedComponent implements OnInit, OnDestroy {
   isEmpty: boolean = false;
   subscription: Subscription;
 
-  constructor(private todoService: TodoService, private dialog: MatDialog, private bottomSheet: MatBottomSheet) { }
+  constructor(private todoService: TodoService, private dialog: MatDialog, private bottomSheet: MatBottomSheet, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.groupTasks();
@@ -41,10 +43,18 @@ export class ArchivedComponent implements OnInit, OnDestroy {
   }
 
   deleteArchives(data: any){
+    const formattedDate = this.datePipe.transform(data.date, 'fullDate');
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
       width: '420px',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false,
+      data: {
+        type: 'ALERT',
+        label: `Delete Archives`,
+        message: `Are you sure you want to delete all archived tasks from ${formattedDate}? This operation cannot be undone.`,
+        btnLabelYes: `Yes, Delete them`,
+        btnLabelNo: `No, Keep them`,
+      }
     })
     confirmDialog.afterClosed().subscribe(result => {
       if(result === true) {
@@ -71,6 +81,10 @@ export class ArchivedComponent implements OnInit, OnDestroy {
     return groupedTasksArray;
 
     // return Object.keys(this.groupedTasks);
+  }
+
+  restoreTask(task: any) {
+    this.bottomSheet.open(AddTodoComponent, { data: {restoreMode: true, task} });
   }
 
   ngOnDestroy() {

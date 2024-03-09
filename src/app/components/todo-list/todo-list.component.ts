@@ -118,7 +118,7 @@ export class TodoListComponent implements OnInit {
 
   editTask(task: any) {
     // console.log(task)
-    this.bottomSheet.open(AddTodoComponent, { data: task });
+    this.bottomSheet.open(AddTodoComponent, { data: {editMode: true, task} });
   }
 
   openArchives() {

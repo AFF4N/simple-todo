@@ -118,26 +118,31 @@ body.dark-mode {
     color: #9a9a9a !important;
   }
 
-  .notif-container{
-    background: #353535;
-  }
+  app-confirmation-dialog{
+    .description{
+      color: #888888;
+    }
+    .notif-container{
+      background: #353535;
+    }
 
-  .action-buttons{
-    background: #232323;
-  }
+    .action-buttons{
+      background: #232323;
+    }
 
-  .icon{
-    color: #F67979 !important;
-  }
+    .icon{
+      color: #F67979 !important;
+    }
 
-  .btn-no{
-    border-color: #686868;
-    background: #353535;
-    color: #a2a2a2;
-  }
+    .btn-no{
+      border-color: #686868;
+      background: #353535;
+      color: #a2a2a2;
+    }
 
-  .btn-yes{
-    color: #ffe2e2;
+    .btn-yes{
+      color: #ffe2e2;
+    }
   }
 
   // .calendar-icon{
