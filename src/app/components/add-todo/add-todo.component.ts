@@ -316,7 +316,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       this.snackBar.open("Task name can't be blank. Give it some love! 🚀", 'OK', {duration: 2000, verticalPosition: 'top'});
       return false;
     }
-    if(new Date(todo.dateCreated) < new Date()){
+    if(new Date(todo.dateCreated).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)){
       this.snackBar.open("Tasks cannot be scheduled in the past! ⌚", 'OK', {duration: 2000, verticalPosition: 'top'});
       return false;
     }
