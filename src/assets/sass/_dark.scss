@@ -28,7 +28,11 @@ body.dark-mode {
       border-color: #2C2C2D;
     }
     background: transparent;
-    border-color: #424242;;
+  }
+  app-add-todo{
+    .emoji-btn{
+      border-color: #424242;;
+    }
   }
   .submit-btn{
     background-color: #3F4EA0;
@@ -101,9 +105,16 @@ body.dark-mode {
     color: #DADADA;
   }
 
+  .tooltip{
+    background-color: #141419;
+  }
+
   .checkmark{
     border: 2px #0E0E11 solid;
     background: linear-gradient(180deg, #2B2D37 0%, #262933 100%);
+    &:hover {
+      background: #3f3f3fba;
+    }
   }
 
   .container input:checked ~ .checkmark {
