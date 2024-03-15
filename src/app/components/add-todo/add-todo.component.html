@@ -11,9 +11,30 @@
           <input matInput  placeholder="Task" type="text" formControlName="name" required>
         </mat-form-field>
 
+        <div class="tags">
+          <mat-chip-grid #chipGrid formControlName="tags">
+            <span class="chips-layout">
+
+              <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="tag.isSelected">
+                {{tag.name}}
+                <button matChipRemove>
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip-option>
+
+              <div [style.display]="tagInput? '' : 'none'" class="add-tag tag-input mat-mdc-standard-chip">
+                <input id="chip-input" #chipInput class="mdc-evolution-chip__text-label" style="flex-basis: min-content;" [matChipInputFor]="chipGrid" (matChipInputTokenEnd)="addTag($event)"/>
+                <mat-icon class="add-icon" title="Add" (click)="addTag(chipInput)">add_circle</mat-icon>
+              </div>
+
+              <div [style.display]="!tagInput? '' : 'none'" class="add-tag" style="background: none;" (click)="toggleTagInput(chipInput)"><mat-icon>add</mat-icon>Add Tag</div>
+            </span>
+          </mat-chip-grid>
+        </div>
+
         <span style="display: flex; gap: 10px;">
           <div class="emojis">
-            <button title="Add Emoji" class="emoji-btn" mat-button (click)="toggleElement()" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="emojiMenu">
+            <button title="Add Emoji" class="emoji-btn" mat-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="emojiMenu">
               <ngx-emoji [isNative]="true" style="height: 24px;display: flex;" [emoji]="selectedEmoji? selectedEmoji: 'smile'"></ngx-emoji>
             </button>
           </div>

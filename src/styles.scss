@@ -23,13 +23,10 @@ $todo-app-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$todo-app-theme: mat.define-light-theme((
-  color: (
-    primary: $todo-app-primary,
-    accent: $todo-app-accent,
-    warn: $todo-app-warn,
-  )
-));
+$todo-app-theme: mat.define-light-theme((color: (primary: $todo-app-primary,
+        accent: $todo-app-accent,
+        warn: $todo-app-warn,
+      )));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -45,17 +42,29 @@ $todo-app-theme: mat.define-light-theme((
 // // Override default theme with dark mode theme
 // @include angular-material-theme($dark-theme);
 
-html, body {
+html,
+body {
   height: 100%;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
   overflow-x: hidden;
 }
-body { margin: 0; font-family: 'Inter', sans-serif; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
 input,
 textarea,
 button,
@@ -64,7 +73,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-hr{
+hr {
   width: 100%;
   border-top: 2px solid #D0D0D0;
   border-radius: 5px;
@@ -98,17 +107,18 @@ hr{
   -ms-user-select: none;
   user-select: none;
 }
+
 .no-select:focus {
   outline: none !important;
 }
 
-.mat-icon{
-  transition: all 0.3s ease;
-  border-radius: 50%;
-  &:hover{
-    background-color: #f8f8f8;
-  }
-}
+// .mat-icon{
+//   transition: all 0.3s ease;
+//   border-radius: 50%;
+//   &:hover{
+//     background-color: #f8f8f8;
+//   }
+// }
 .mat-bottom-sheet-container {
   padding: 8px 16px;
   min-width: 100vw !important;
@@ -121,7 +131,7 @@ hr{
   border-radius: 10px 10px 0px 0px;
 }
 
-.mat-mdc-menu-panel{
+.mat-mdc-menu-panel {
   border-radius: 10px !important;
 }
 
@@ -131,45 +141,58 @@ hr{
 // .mdc-button .mdc-button__label{
 //   color: #424242 !important;
 // }
-.mat-mdc-snack-bar-container .mdc-snackbar__surface{
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
   background-color: #fff !important;
   margin-top: 5%;
 }
+
 .mat-calendar-body-today {
   border-color: #3F4EA0 !important;
 }
+
 .mat-calendar-body-selected {
   background-color: #3F4EA0 !important;
 }
+
 .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
-  background-color: #a0a0a0  !important;
+  background-color: #a0a0a0 !important;
 }
+
 .mat-mdc-icon-button {
   --mdc-icon-button-icon-color: #616161;
 }
+
 .mat-mdc-snack-bar-container .mdc-snackbar__label {
   color: #181818 !important;
 }
-.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+
+.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
   color: #181818 !important;
 }
-.mat-mdc-menu-panel{
+
+.mat-mdc-menu-panel {
   max-width: 100% !important;
 }
+
 .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__action--primary {
   padding-left: 12px !important;
   padding-right: 12px;
 }
+
 .mdc-evolution-chip__cell {
   justify-content: center;
 }
+
 .mdc-evolution-chip-set__chips {
   flex-wrap: nowrap !important;
   margin: 0px !important;
 }
+
 .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
   display: none;
 }
-.mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary, .mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
---mdc-chip-elevated-container-color: #1d1d1f;
+
+.mat-mdc-standard-chip.mat-mdc-chip-selected.mat-primary,
+.mat-mdc-standard-chip.mat-mdc-chip-highlighted.mat-primary {
+  --mdc-chip-elevated-container-color: #1d1d1f;
 }

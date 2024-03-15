@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
@@ -19,6 +19,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   previousIndex = 0;
   time: boolean = false;
   date: boolean = false;
+  tagInput: boolean = false;
+  tags = [];
+  selectedTags = [];
   selectedChip: any;
   dateToday: any;
   dateTomorrow: any;
@@ -39,7 +42,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private snackBar: MatSnackBar
   ) {
-    console.log(data);
+    // console.log(data);
     if(data !== null) {
       this.objTask = data.task;
       this.editMode = data.editMode;
@@ -57,29 +60,46 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.todoForm = new FormGroup({
       name: new FormControl('', Validators.required),
+      tags: new FormControl([]),
       note: new FormControl(''),
       emoji: new FormControl('✨'),
       date: new FormControl(new Date()),
       time: new FormControl(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })),
       scheduleSelect: new FormControl('Today'),
     })
+    const theme = localStorage.getItem('DarkMode');
+    this.darkMode = JSON.parse(theme);
+    const tags = JSON.parse(localStorage.getItem('tags') as string);
+    if (tags != null){
+      this.tags = tags // local tags
+    }
     if(this.restoreMode) {
       this.headerLabel = 'Restore task from archives 📂';
       this.headerDesc = 'Give life back to a task from the past!';
       this.btnLabel = 'Restore Task';
       this.objTask.archived = false;
+      this.selectedTags = this.objTask.tags;
       this.patchFormData();
     } else if (this.editMode) {
       this.headerLabel = 'Edit your task 🖊️';
       this.headerDesc = 'Make it even better! Update the details of your task.';
       this.btnLabel = 'Save Changes';
+      this.selectedTags = this.objTask.tags;
       this.patchFormData();
     } else {
       this.headerLabel = 'What tasks we got today? 🤔';
       this.headerDesc = 'Add a dash of productivity to your day';
       this.btnLabel = 'Add Task';
+      this.selectedTags = []
     }
+    this.getSelectedTags();
     this.calculateDate();
+  }
+
+  getSelectedTags() {
+    this.tags.forEach(localTag => {
+      localTag.isSelected = this.selectedTags.some(selectedTag => selectedTag.name === localTag.name);
+    });
   }
 
   patchFormData() {
@@ -93,12 +113,6 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     this.date = true;
     this.time = true;
     this.clearClockInterval();
-  }
-
-  toggleElement() {
-    // this.emojiPopup = !this.emojiPopup;
-    const theme:any = localStorage.getItem('DarkMode');
-    this.darkMode = JSON.parse(theme);
   }
 
   select($event: { emoji: any }) {
@@ -136,6 +150,65 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  toggleTagInput(input) {
+    input.value = '';
+    this.tagInput = true;
+    setTimeout(() => {
+      const el = document.getElementById('chip-input');
+      el.focus();
+      el.addEventListener("blur", () => {
+        setTimeout(() => {
+          this.tagInput = false;
+        }, 100);
+      });
+    }, 0);
+  }
+
+  onSelectTag(tag) {
+    const index = this.selectedTags.findIndex(p => p.name === tag.name);
+    if (index === -1) {
+      this.selectedTags.push(tag);
+      if(this.todoForm.value.name == ''){
+        this.todoForm.get('name').patchValue(tag.name);
+      }
+    } else {
+      this.selectedTags.splice(index, 1);
+    }
+    if(this.selectedTags.length === 0){
+      this.todoForm.get('name').patchValue('');
+    }
+    // console.log('local tags array:', this.tags);
+    // console.log('selected tags:', this.selectedTags);
+  }
+
+  removeTag(tag: any) {
+    const index = this.tags.indexOf(tag);
+    if (index >= 0) {
+      this.selectedTags.splice(index, 1);
+      this.tags.splice(index, 1);
+      localStorage.setItem('tags', JSON.stringify(this.tags));
+    }
+    // console.log('local tags array:', this.tags);
+    // console.log('selected tags:', this.selectedTags);
+  }
+
+  addTag(event: any): void {
+    this.tagInput = true;
+    const value = (event.value || '').trim();
+    if (this.validateTag(value)) {
+      const tag = {
+        name: value,
+        isSelected: false
+      };
+      this.tags.push(tag);
+      this.tagInput = false;
+      event.chipInput?.clear();
+      localStorage.setItem('tags', JSON.stringify(this.tags));
+    }
+    // console.log('local tags array:', this.tags);
+    // console.log('selected tags:', this.selectedTags);
   }
 
   onChangeSchedule(event: any) {
@@ -221,6 +294,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       const todo = {
         id: uuidv4(),
         name: this.todoForm.value.name,
+        tags: this.selectedTags,
         note: this.todoForm.value.note,
         emoji: emoji,
         checked: false,
@@ -236,6 +310,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     } else { // Edit or Restore Mode
       const todo = {
         id: this.objTask.id,
+        tags: this.objTask.tags,
         name: this.todoForm.value.name,
         note: this.todoForm.value.note,
         emoji: emoji,
@@ -318,6 +393,18 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     }
     if(new Date(todo.dateCreated).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)){
       this.snackBar.open("Tasks cannot be scheduled in the past! ⌚", 'OK', {duration: 2000, verticalPosition: 'top'});
+      return false;
+    }
+    return true;
+  }
+
+  validateTag(value: string) {
+    if(value === '') {
+      this.snackBar.open("Tag name can't be blank", 'OK', {duration: 2000, verticalPosition: 'top'});
+      return false;
+    }
+    if(this.tags.some(el => el.name === value)){
+      this.snackBar.open("Tag already exists!", 'OK', { duration: 2000, verticalPosition: 'top' });
       return false;
     }
     return true;

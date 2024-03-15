@@ -129,6 +129,62 @@ textarea {
   height: 100%;
 }
 
+.tags{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  &-chip {
+    margin: 4px;
+  }
+
+  .chips-layout{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 600px;
+    margin-bottom: 4px;
+    margin-top: -18px;
+    gap: 6px;
+  }
+
+  .add-tag{
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0px 10px;
+    margin: 4px;
+    color: grey;
+    cursor: pointer;
+    &:hover{
+      color: #212121;
+    }
+    mat-icon{
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  .tag-input{
+    width: 120px;
+  }
+
+  .input-close{
+    position: absolute;
+    margin-right: 108px;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  .mdc-evolution-chip-set .mdc-evolution-chip {
+    margin: 0 !important;
+  }
+}
+
 .schedule {
   display: flex;
   flex-direction: column;

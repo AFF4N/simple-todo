@@ -1,5 +1,6 @@
 export class Task {
   id: string = '';
+  tags: any[] = [];
   type: string = '';
   name: string = '';
   note: string = '';
