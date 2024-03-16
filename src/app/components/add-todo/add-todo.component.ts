@@ -6,6 +6,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TodoService } from 'src/app/services/todo.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from 'src/app/models/task.model';
+import { NotificationService } from 'src/app/shared/notification/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
@@ -40,7 +43,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private bottomSheet: MatBottomSheet,
     private todoService: TodoService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notification: NotificationService,
+    private dialog: MatDialog
   ) {
     // console.log(data);
     if(data !== null) {
@@ -71,20 +76,22 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     this.darkMode = JSON.parse(theme);
     const tags = JSON.parse(localStorage.getItem('tags') as string);
     if (tags != null){
-      this.tags = tags // local tags
+      this.tags = structuredClone(tags) // deep copy of tags from localStorage
     }
     if(this.restoreMode) {
       this.headerLabel = 'Restore task from archives 📂';
       this.headerDesc = 'Give life back to a task from the past!';
       this.btnLabel = 'Restore Task';
       this.objTask.archived = false;
-      this.selectedTags = this.objTask.tags;
+      this.selectedTags = structuredClone(this.objTask.tags);
+      this.getSelectedTags();
       this.patchFormData();
     } else if (this.editMode) {
       this.headerLabel = 'Edit your task 🖊️';
       this.headerDesc = 'Make it even better! Update the details of your task.';
       this.btnLabel = 'Save Changes';
-      this.selectedTags = this.objTask.tags;
+      this.selectedTags = structuredClone(this.objTask.tags);
+      this.getSelectedTags();
       this.patchFormData();
     } else {
       this.headerLabel = 'What tasks we got today? 🤔';
@@ -92,14 +99,18 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       this.btnLabel = 'Add Task';
       this.selectedTags = []
     }
-    this.getSelectedTags();
     this.calculateDate();
   }
 
   getSelectedTags() {
-    this.tags.forEach(localTag => {
-      localTag.isSelected = this.selectedTags.some(selectedTag => selectedTag.name === localTag.name);
-    });
+    if(this.selectedTags == undefined){
+      this.selectedTags = [];
+    }
+    if(this.selectedTags.length !== 0){
+      this.tags.forEach(localTag => {
+        localTag.isSelected = this.selectedTags.some(selectedTag => selectedTag.name === localTag.name);
+      });
+    }
   }
 
   patchFormData() {
@@ -176,22 +187,62 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     } else {
       this.selectedTags.splice(index, 1);
     }
-    if(this.selectedTags.length === 0){
+    if(this.selectedTags.length === 0 && tag.name == this.todoForm.value.name){
       this.todoForm.get('name').patchValue('');
     }
     // console.log('local tags array:', this.tags);
     // console.log('selected tags:', this.selectedTags);
+    // console.log('this.objTask:', this.objTask);
   }
 
   removeTag(tag: any) {
-    const index = this.tags.indexOf(tag);
-    if (index >= 0) {
-      this.selectedTags.splice(index, 1);
-      this.tags.splice(index, 1);
-      localStorage.setItem('tags', JSON.stringify(this.tags));
-    }
-    // console.log('local tags array:', this.tags);
-    // console.log('selected tags:', this.selectedTags);
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
+      width: '420px',
+      autoFocus: false,
+      restoreFocus: false,
+      data: {
+        type: 'ALERT',
+        label: `Delete Tag`,
+        message: `Are you sure you want to delete '${tag.name}' tag? This operation cannot be undone.`,
+        note: `NOTE: The tag will be removed from all associated tasks.`,
+        btnLabelYes: `Yes, Delete`,
+        btnLabelNo: `No, Keep it`
+      }
+    })
+    confirmDialog.afterClosed().subscribe(result => {
+      if(result === true) {
+        this.notification.showLoader(true);
+        const selectedIndex = this.selectedTags.findIndex(item => item.name === tag.name);
+        const localIndex = this.tags.findIndex(item => item.name === tag.name);
+        if (selectedIndex >= 0) {
+          this.selectedTags.splice(selectedIndex, 1);
+        }
+        if (localIndex >= 0) {
+          this.tags.splice(localIndex, 1);
+          const tags = this.tags.map(tag => ({ name: tag.name }));
+          localStorage.setItem('tags', JSON.stringify(tags));
+
+          // update tasks lists with deleted tag
+          const tasks = JSON.parse(localStorage.getItem('tasks'))
+          tasks.forEach(task => {
+            if(task.tags){
+              const index = task.tags.findIndex(item => item.name === tag.name);
+              if (index >= 0) {
+                task.tags.splice(index, 1);
+              }
+            }
+          })
+          // console.log(tasks);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+          this.todoService.loadTasksFromLocalStorage();
+          this.todoService.updateStatusArrays();
+          this.notification.showLoader(false);
+        }
+        // console.log('local tags array:', this.tags);
+        // console.log('selected tags:', this.selectedTags);
+      }
+    });
+
   }
 
   addTag(event: any): void {
@@ -200,7 +251,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     if (this.validateTag(value)) {
       const tag = {
         name: value,
-        isSelected: false
+        // isSelected: false
       };
       this.tags.push(tag);
       this.tagInput = false;
@@ -310,7 +361,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     } else { // Edit or Restore Mode
       const todo = {
         id: this.objTask.id,
-        tags: this.objTask.tags,
+        tags: this.selectedTags,
         name: this.todoForm.value.name,
         note: this.todoForm.value.note,
         emoji: emoji,

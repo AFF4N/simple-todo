@@ -4,7 +4,10 @@
     <label class="title">{{data.label}}</label>
   </div>
   <div class="action-buttons">
-    <p class="description">{{data.message}}</p>
+    <p class="description">
+      <span>{{data.message}}</span>
+      <span>{{data.note}}</span>
+    </p>
     <span style="padding: 0px 10px 24px 10px;">
       <button mat-button class="btn btn-no" (click)="onClickNo()">{{data.btnLabelNo}}</button>
       <button mat-button class=" btn btn-yes" (click)="onClickYes()">{{data.btnLabelYes}}</button>

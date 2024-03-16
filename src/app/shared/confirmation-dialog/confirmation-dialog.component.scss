@@ -52,7 +52,11 @@
 }
 
 .description{
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  padding: 12px 24px;
   color: #575767;
   font-family: Inter;
   font-size: 12px;

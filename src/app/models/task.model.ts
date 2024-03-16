@@ -13,3 +13,12 @@ export class Task {
 export class GroupedTasks {
   [date: string]: Task[];
 }
+
+export class AlertModel {
+  type?: string = '';
+  label: string = '';
+  message: string = '';
+  note?: string = '';
+  btnLabelYes: string = '';
+  btnLabelNo: string = '';
+}

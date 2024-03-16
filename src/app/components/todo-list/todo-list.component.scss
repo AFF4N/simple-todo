@@ -122,7 +122,7 @@ hr.rounded {
   align-items: flex-start;
   gap: 8px;
   position: relative;
-  padding: 6px 12px;
+  padding: 12px;
 }
 .todo-item:hover {
   background: #f5f5f5;
@@ -224,14 +224,13 @@ hr.rounded {
 .todo-item-date {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   height: 24px;
   color: #ababab;
   font-size: 10px;
   font-family: "Inter", sans-serif;
   font-weight: 500;
   line-height: 12px;
-  word-wrap: break-word;
-  padding-right: 18px;
 }
 
 ::ng-deep section.emoji-mart {
@@ -305,6 +304,7 @@ hr.rounded {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Inter', sans-serif;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
   cursor: grab;
   transition-duration: .3s;
@@ -544,7 +544,7 @@ label.container:focus-visible {
   justify-content: flex-end;
   align-items: center;
   color: grey;
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: 18px;
   width: 32px;
 }

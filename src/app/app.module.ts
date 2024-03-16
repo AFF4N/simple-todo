@@ -13,11 +13,12 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ArchivedComponent } from './components/archived/archived.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { AboutComponent } from './components/about/about.component';
-import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confirmation-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatDateFormats, DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
+import { NotificationComponent } from './shared/notification/notification.component';
 
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -38,7 +39,8 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     ArchivedComponent,
     SettingsComponent,
     AboutComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,
