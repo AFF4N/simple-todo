@@ -9,7 +9,7 @@
           <div class="archived-date">
             <div class="date-label">{{ task.date | date:'longDate'}}</div>
             <span (click)="deleteArchives(task)">
-              <mat-icon class="flex-center dlt-icon no-select">delete</mat-icon>
+              <mat-icon class="flex-center btn-icon dlt-icon no-select">delete</mat-icon>
             </span>
           </div>
           <div class="archived-todos">
@@ -26,7 +26,7 @@
                         <div class="todo-item-label">{{task.emoji.native +' '+ task.name}}</div>
                         <div class="todo-note-label">{{task.note}}</div>
                       </div>
-                      <div class="restore-icon no-select" title="Restore" (click)="restoreTask(task)">
+                      <div class="restore-icon btn-icon no-select" title="Restore" (click)="restoreTask(task)">
                         <mat-icon>restore</mat-icon>
                       </div>
                     </div>

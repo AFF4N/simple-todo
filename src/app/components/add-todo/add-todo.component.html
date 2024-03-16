@@ -8,7 +8,7 @@
       </div>
         <mat-form-field color="primary" appearance="outline">
           <mat-label>Task</mat-label>
-          <input matInput  placeholder="Task" type="text" formControlName="name" required>
+          <input matInput  placeholder="Task" type="text" formControlName="name">
         </mat-form-field>
 
         <div class="tags">
@@ -18,7 +18,7 @@
               <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="tag.isSelected">
                 {{tag.name}}
                 <button matChipRemove>
-                  <mat-icon>close</mat-icon>
+                  <mat-icon class="chip-icon">close</mat-icon>
                 </button>
               </mat-chip-option>
 

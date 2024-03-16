@@ -96,7 +96,7 @@
                 <div class="todo-item-tags-mobile">
                   <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                 </div>
-                <div id="edit-btn" class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon no-select" title="Edit">edit</mat-icon></div>
+                <div id="edit-btn" class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon btn-icon no-select" title="Edit">edit</mat-icon></div>
               </div>
             </div>
           </div>
@@ -152,7 +152,7 @@
                 <div class="todo-item-tags-mobile">
                   <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                 </div>
-                <div class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon no-select" title="Edit">edit</mat-icon></div>
+                <div class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon btn-icon no-select" title="Edit">edit</mat-icon></div>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@
       <hr>
       <div class="todo-item-label todo-item-label_msg todo-item-label_future">
         Plan tomorrow's success right here
-        <mat-icon class="collapse-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
+        <mat-icon class="no-select collapse-icon btn-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
       </div>
       <div class="future-todos" *ngIf="!collapsed" [@slideTopBottom]>
         <div *ngFor="let tab of futureTasks; index as i; trackBy: trackByFn">
@@ -232,7 +232,7 @@
                     <div class="todo-item-tags-mobile">
                       <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                     </div>
-                    <div class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon no-select" title="Edit">edit</mat-icon></div>
+                    <div class="tooltip no-select" (click)="editTask(task)"><mat-icon class="flex-center edit-icon btn-icon no-select" title="Edit">edit</mat-icon></div>
                   </div>
                 </div>
               </div>

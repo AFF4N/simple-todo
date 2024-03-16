@@ -64,7 +64,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.todoForm = new FormGroup({
-      name: new FormControl('', Validators.required),
+      name: new FormControl(''),
       tags: new FormControl([]),
       note: new FormControl(''),
       emoji: new FormControl('✨'),
