@@ -332,18 +332,6 @@ export class TodoListComponent implements OnInit {
     });
   }
 
-  getlocalTags() {
-    const tags = JSON.parse(localStorage.getItem('tags'));
-    if(tags){
-      console.log(tags);
-      this.filterTags = tags;
-    }
-  }
-
-  onSelectTags(event){
-    console.log(event)
-  }
-
   collapse() {
     this.collapsed = !this.collapsed;
     localStorage.setItem( 'collapse', this.collapsed.toString());
