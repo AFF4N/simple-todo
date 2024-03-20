@@ -41,6 +41,7 @@ export class TodoListComponent implements OnInit {
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
+    this.checkActivePWAState();
   }
 
   ngOnInit() {
@@ -314,6 +315,33 @@ export class TodoListComponent implements OnInit {
       this.isDarkMode = e.matches;
       this.todoService.toggleDarkMode(this.isDarkMode);
     });
+  }
+
+  checkActivePWAState = () => {
+    window.addEventListener("visibilitychange", () => {
+      // console.log("Visibility changed");
+      if (document.visibilityState === "visible") {
+        // console.log("App resumed");
+        const currentDate = new Date().setHours(0,0,0,0);
+        const appDate = this.todaysDate.setHours(0,0,0,0);
+        if (appDate < currentDate) {
+          // console.log("Header date is behind current date. Reloading app...");
+          window.location.reload();
+        }
+      }
+    });
+  }
+
+  getlocalTags() {
+    const tags = JSON.parse(localStorage.getItem('tags'));
+    if(tags){
+      console.log(tags);
+      this.filterTags = tags;
+    }
+  }
+
+  onSelectTags(event){
+    console.log(event)
   }
 
   collapse() {

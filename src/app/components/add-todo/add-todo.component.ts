@@ -223,19 +223,21 @@ export class AddTodoComponent implements OnInit, OnDestroy {
           localStorage.setItem('tags', JSON.stringify(tags));
 
           // update tasks lists with deleted tag
-          const tasks = JSON.parse(localStorage.getItem('tasks'))
-          tasks.forEach(task => {
-            if(task.tags){
-              const index = task.tags.findIndex(item => item.name === tag.name);
-              if (index >= 0) {
-                task.tags.splice(index, 1);
+          const tasks = JSON.parse(localStorage.getItem('tasks'));
+          if(tasks){
+            tasks.forEach(task => {
+              if(task.tags){
+                const index = task.tags.findIndex(item => item.name === tag.name);
+                if (index >= 0) {
+                  task.tags.splice(index, 1);
+                }
               }
-            }
-          })
-          // console.log(tasks);
-          localStorage.setItem('tasks', JSON.stringify(tasks));
-          this.todoService.loadTasksFromLocalStorage();
-          this.todoService.updateStatusArrays();
+            })
+            // console.log(tasks);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            this.todoService.loadTasksFromLocalStorage();
+            this.todoService.updateStatusArrays();
+          }
           this.notification.showLoader(false);
         }
         // console.log('local tags array:', this.tags);
