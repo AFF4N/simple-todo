@@ -92,7 +92,7 @@
                     </div>
                   </span>
                 </div>
-                <div class="todo-note-label">{{task.note}}</div>
+                <pre class="todo-note-label">{{task.note}}</pre>
                 <div class="todo-item-tags-mobile">
                   <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                 </div>
@@ -192,7 +192,7 @@
                       <div style="width: 100%;">
                         <div class="todo-item-actions">
                           <label class="container no-select">
-                            <input id="todoFuture" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
+                            <input [id]="'todoFuture-'+task.id" type="checkbox" [checked]="task.checked" (change)="toggleTaskStatus(task)">
                             <span class="checkmark"></span>
                           </label>
                           <div class="todo-item-emoji">
@@ -228,7 +228,7 @@
                         </div>
                       </span>
                     </div>
-                    <div class="todo-note-label">{{task.note}}</div>
+                    <pre class="todo-note-label">{{task.note}}</pre>
                     <div class="todo-item-tags-mobile">
                       <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                     </div>

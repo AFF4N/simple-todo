@@ -42,27 +42,10 @@ $todo-app-theme: mat.define-light-theme((color: (primary: $todo-app-primary,
 // // Override default theme with dark mode theme
 // @include angular-material-theme($dark-theme);
 
-html,
-body {
-  height: 100%;
-  -webkit-touch-callout: none;
-  /* iOS Safari */
-  -webkit-user-select: none;
-  /* Safari */
-  -khtml-user-select: none;
-  /* Konqueror HTML */
-  -moz-user-select: none;
-  /* Old versions of Firefox */
-  -ms-user-select: none;
-  /* Internet Explorer/Edge */
-  user-select: none;
-  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-  overflow-x: hidden;
-}
-
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
+  cursor: default;
 }
 
 input,
@@ -110,6 +93,11 @@ hr {
 
 .no-select:focus {
   outline: none !important;
+}
+
+pre{
+  white-space: pre-wrap;
+  margin: 0;
 }
 
 // .mat-icon{

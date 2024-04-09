@@ -24,7 +24,7 @@
                     <div class="todo-item">
                       <div class="todo-detail">
                         <div class="todo-item-label">{{task.emoji.native +' '+ task.name}}</div>
-                        <div class="todo-note-label">{{task.note}}</div>
+                        <pre class="todo-note-label">{{task.note}}</pre>
                       </div>
                       <div class="restore-icon btn-icon no-select" title="Restore" (click)="restoreTask(task)">
                         <mat-icon>restore</mat-icon>
