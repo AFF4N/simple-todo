@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Task } from 'src/app/models/task.model';
 import { AddTodoComponent } from '../add-todo/add-todo.component';
@@ -18,7 +18,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./todo-list.component.scss'],
   animations: [taskAnimations, deleteBtnAnimation, slideTopBottom],
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent implements OnInit, AfterViewChecked {
   todaysDate = new Date();
   isChecked: boolean = false;
   deleteBtn: boolean = false;
@@ -38,6 +38,12 @@ export class TodoListComponent implements OnInit {
   selectedEmoji: any;
   collapsed: boolean = true;
   isOverDelete = false;
+  filterTags: any = [];
+  selectedTagIndex = -1;
+  showPrevButton = false;
+  showNextButton = false;
+
+  @ViewChild('carousel') carousel: any;
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
@@ -80,6 +86,11 @@ export class TodoListComponent implements OnInit {
       this.todoService.toggleDarkMode(true);
     }
     this.collapsed = JSON.parse(localStorage.getItem('collapse') as string);
+    this.getlocalTags();
+
+    this.todoService.getClickEvent().subscribe(()=>{
+      this.getlocalTags();
+    });
   }
 
   sortFutureTasks() {
@@ -114,12 +125,26 @@ export class TodoListComponent implements OnInit {
   }
 
   AddNewTask(){
-    this.bottomSheet.open(AddTodoComponent);
+    const bottomSheetRef = this.bottomSheet.open(AddTodoComponent);
+    bottomSheetRef.afterDismissed().subscribe((refresh) => {
+      if(refresh){
+        this.scrollToStart();
+        this.selectedTagIndex = -1;
+        this.getlocalTags();
+      }
+    });
   }
 
   editTask(task: any) {
     // console.log(task)
-    this.bottomSheet.open(AddTodoComponent, { data: {editMode: true, task} });
+    const bottomSheetRef = this.bottomSheet.open(AddTodoComponent, { data: {editMode: true, task} });
+    bottomSheetRef.afterDismissed().subscribe((refresh) => {
+      if(refresh){
+        this.scrollToStart();
+        this.selectedTagIndex = -1;
+        this.getlocalTags();
+      }
+    });
   }
 
   openArchives() {
@@ -283,8 +308,11 @@ export class TodoListComponent implements OnInit {
       this.disableAnimations = true;
       let task = event.detail
       this.deletedTask = task;
-
+      this.scrollToStart();
+      this.selectedTagIndex = -1;
+      // this.todoService.loadTasksFromLocalStorage();
       this.todoService.deleteTasks(task);
+      this.getlocalTags();
       setTimeout(() => {
         this.disableAnimations = false;
       }, 100);
@@ -295,6 +323,7 @@ export class TodoListComponent implements OnInit {
       });
       snackBarRef.onAction().subscribe(() => {
         this.undoDelete();
+        this.getlocalTags();
       });
 
     }
@@ -332,6 +361,77 @@ export class TodoListComponent implements OnInit {
     });
   }
 
+  getlocalTags() {
+    let tagCounts = {};
+    this.allTasks.forEach(task => {
+      task.tags.forEach(tag => {
+        if (!task.archived) {
+          tagCounts[tag.name] = (tagCounts[tag.name] || 0) + 1;
+        }
+      });
+    });
+
+    let tags = [];
+    for (let tagName in tagCounts) {
+      tags.push({ name: tagName, count: tagCounts[tagName] });
+    }
+
+    this.filterTags = tags.sort(
+      function (a, b) {
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  onSelectTags(index){
+    if(this.selectedTagIndex === index) return;
+    this.selectedTagIndex = index;
+    this.todoService.loadTasksFromLocalStorage();
+    let tasksList = [];
+    let selectedTag = this.filterTags[index];
+    if(index == -1) {
+      selectedTag = {name: 'All'}
+    } else {
+      tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
+      this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+    }
+  }
+
+  findTasksWithTag(tasks, targetTag) {
+    return tasks.filter(task => task.tags.some(tag => tag.name === targetTag.name));
+  }
+
+  scrollToStart() {
+    this.carousel?.nativeElement.scrollTo({ left: 0, behavior: 'smooth' });
+  }
+
+  scrollRight() {
+    this.carousel?.nativeElement.scrollTo({ left: (this.carousel?.nativeElement.scrollLeft + 150), behavior: 'smooth' });
+  }
+
+  scrollLeft() {
+    this.carousel?.nativeElement.scrollTo({ left: (this.carousel?.nativeElement.scrollLeft - 150), behavior: 'smooth' });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.checkButtonVisibility();
+  }
+
+  checkButtonVisibility() {
+    const containerWidth = this.carousel?.nativeElement.clientWidth;
+    const totalWidth = this.carousel?.nativeElement.scrollWidth;
+    const scrollLeft = this.carousel?.nativeElement.scrollLeft;
+
+    this.showPrevButton = totalWidth > containerWidth;
+    this.showNextButton = totalWidth > containerWidth;
+  }
+
   collapse() {
     this.collapsed = !this.collapsed;
     localStorage.setItem( 'collapse', this.collapsed.toString());
@@ -339,5 +439,9 @@ export class TodoListComponent implements OnInit {
 
   trackByFn(index: number, item: any): string {
     return item.id;
+  }
+
+  ngAfterViewChecked(){
+    this.checkButtonVisibility();
   }
 }

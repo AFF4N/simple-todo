@@ -2,7 +2,7 @@
   <header class="header">
     <div class="date-wrapper">
       <h3 class="date">{{todaysDate | date:'longDate'}}</h3>
-      <div class="status">{{incompleteTasks.length}} incomplete, {{completedTasks.length}} completed</div>
+      <div class="status">{{incompleteTasks.length + futureTasks.length}} incomplete, {{completedTasks.length}} completed</div>
     </div>
     <div class="menu" style="-webkit-tap-highlight-color: transparent;">
       <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">more_vert</mat-icon>
@@ -24,6 +24,36 @@
   </header>
   <hr>
   <div class="todos">
+    <div class="tags-filter" *ngIf="filterTags.length !==0">
+      <div class="filter-label">filter by tags</div>
+
+      <div class="carousel-container" #container>
+        <button class="nav-btn" (click)="scrollLeft()" *ngIf="showPrevButton">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <div class="carousel" #carousel>
+          <button class="tag-btn"
+            [ngClass]="{active: selectedTagIndex === -1}"
+            (click)="onSelectTags(-1)">
+            <span class="tag-label">All</span>
+          </button>
+          <button
+            #btn
+            class="tag-btn"
+            *ngFor="let tag of filterTags; index as i"
+            [ngClass]="{active: selectedTagIndex === i}"
+            [matBadge]="tag.count"
+            matBadgePosition="after"
+            (click)="onSelectTags(i)">
+            <span class="tag-label">{{tag.name}}</span>
+          </button>
+        </div>
+        <button class="nav-btn" (click)="scrollRight()" *ngIf="showNextButton">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
     <div class="incomplete-todos">
       <div class="todo-label">Incomplete</div>
       <div class="todo-items">
@@ -143,7 +173,7 @@
                       <span class="todo-item-text">{{task.name}}</span>
                     </div>
                   </div>
-                  <span style="display: flex; flex: none; gap: 8px; padding-top: 5px;">
+                  <span style="display: flex; flex: none; gap: 8px; padding-top: 5px; max-width: 60%;">
                     <div class="todo-item-tags">
                       <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                     </div>
@@ -219,7 +249,7 @@
                           <span class="todo-item-text">{{task.name}}</span>
                         </div>
                       </div>
-                      <span style="display: flex; flex: none; gap: 8px; padding-top: 5px;">
+                      <span style="display: flex; flex: none; gap: 8px; padding-top: 5px; max-width: 60%;">
                         <div class="todo-item-tags">
                           <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                         </div>

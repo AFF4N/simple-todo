@@ -84,7 +84,12 @@ export class ArchivedComponent implements OnInit, OnDestroy {
   }
 
   restoreTask(task: any) {
-    this.bottomSheet.open(AddTodoComponent, { data: {restoreMode: true, task} });
+    const bottomSheetRef = this.bottomSheet.open(AddTodoComponent, { data: {restoreMode: true, task} });
+    bottomSheetRef.afterDismissed().subscribe((refresh) => {
+      if(refresh){
+        this.todoService.sendClickEvent();
+      }
+    });
   }
 
   ngOnDestroy() {

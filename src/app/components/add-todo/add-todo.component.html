@@ -117,7 +117,7 @@
         </span>
 
         <input type="hidden" name="_gotcha" style="display:none !important">
-      <button type="submit" matInput class="submit-btn" tabindex="0" (click)="onSubmit()">{{btnLabel}}
+        <button type="submit" matInput class="submit-btn" tabindex="0" [disabled]="disabled" (click)="onSubmit()">{{btnLabel}}
         <span class="mui-span"></span>
       </button>
     </div>

@@ -38,6 +38,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   headerLabel: string = '';
   headerDesc: string = '';
   btnLabel: string = '';
+  disabled = false;
 
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
@@ -237,6 +238,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
             localStorage.setItem('tasks', JSON.stringify(tasks));
             this.todoService.loadTasksFromLocalStorage();
             this.todoService.updateStatusArrays();
+            this.todoService.sendClickEvent();
           }
           this.notification.showLoader(false);
         }
@@ -357,8 +359,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         type: this.taskType
       }
       if(this.validateTask(todo)){
+        this.disabled = true;
         this.todoService.addTask(todo);
-        this.bottomSheet.dismiss();
+        this.bottomSheet.dismiss(true);
       }
     } else { // Edit or Restore Mode
       const todo = {
@@ -373,8 +376,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         type: this.taskType
       }
       if(this.validateTask(todo)){
+        this.disabled = true;
         this.todoService.updateTask(todo);
-        this.bottomSheet.dismiss();
+        this.bottomSheet.dismiss(true);
       }
     }
   }
@@ -430,7 +434,12 @@ export class AddTodoComponent implements OnInit, OnDestroy {
 
   stitchTime(date: any) {
     let selectedTime = this.todoForm.value.time
-    const [hours, minutes] = selectedTime.split(':');
+    let [hours, minutes] = selectedTime.split(':');
+    // hours = 1;
+    // minutes = 43;
+    // if(hours == 24){
+    //   hours = 0
+    // }
     date.set({
       hour: parseInt(hours, 10),
       minute: parseInt(minutes, 10)

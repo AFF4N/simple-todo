@@ -109,6 +109,38 @@ body.dark-mode {
     background: #1e1e1e;
   }
 
+  .tag-btn{
+    background: #333333;
+    &:hover{
+      background-color: #454545;
+    }
+    &:focus-visible {
+      outline: #6c6c6c  solid 2px;
+    }
+  }
+
+  .tag-label{
+    color: #e4e4e4;
+  }
+
+  .tag-btn.active{
+    background: #ababab;
+    & span.tag-label{
+      color: black !important;
+    }
+  }
+
+  .nav-btn{
+    color: grey;
+    &:active {
+      color: black;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+
   .tag-chip {
     color: #959595;
     background: #333333 !important;

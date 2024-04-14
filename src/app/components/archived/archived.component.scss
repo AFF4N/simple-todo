@@ -35,7 +35,7 @@
 }
 
 .archived-todos {
-  padding: 15px;
+  padding: 12px;
   border-radius: 15px;
   background: #F8F8F8;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.25);
@@ -90,14 +90,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
 }
 
 .archived-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 5px;
 }
 
 .checkbox {
@@ -112,14 +110,14 @@
 .todo-item {
   display: inline-flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0px 12px;
+  // padding: 0px 12px;
 }
 
 .todo-detail {
-  width: 85%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
 }
 
@@ -140,16 +138,18 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
-  margin: 0 10px 0 10px;
+  margin: 0 10px 5px 10px;
 }
 
 .restore-icon{
   color: #86858C;
   font-size: 16px;
   border-radius: 50%;
+  margin-top: 10px;
+  margin-right: 5px;
   cursor: pointer;
   &:hover{
-    background-color: #f5f5f5;
+    background-color: transparent !important;
   }
 }
 
