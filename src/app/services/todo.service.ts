@@ -69,6 +69,10 @@ export class TodoService {
   }
 
   updateStatusArrays() {
+    console.log('rootData', this.rootData);
+    console.log('alltasks', this.allTasks);
+    console.log(' ---------- ');
+
     if(this.filtersActive){
       this.rootData = this.mergeArrays(this.allTasks, this.rootData);
     } else {
@@ -119,7 +123,7 @@ export class TodoService {
   }
 
   saveTasksToLocalStorage() {
-    // console.log("data saved to LocalStorage:", this.rootData);
+    console.log("data saved to LocalStorage:", this.rootData);
     localStorage.setItem('tasks', JSON.stringify(this.rootData));
   }
 
@@ -163,14 +167,15 @@ export class TodoService {
   }
 
   deleteTasks(task: Task) {
+    this.allTasks = this.allTasks.filter(todo => todo.id !== task.id);
+    this.updateStatusArrays();
     this.rootData = this.rootData.filter(todo => todo.id !== task.id);
     this.saveTasksToLocalStorage();
-    this.loadTasksFromLocalStorage();
   }
 
   restoreTask(task: Task) { // undo deleted task
-    this.allTasks.push(task);
-    localStorage.setItem('tasks', JSON.stringify(this.allTasks));
+    this.rootData.push(task);
+    this.saveTasksToLocalStorage();
     this.loadTasksFromLocalStorage();
   }
 

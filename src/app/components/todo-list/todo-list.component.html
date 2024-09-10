@@ -28,7 +28,7 @@
       <div class="filter-label">filter by tags</div>
 
       <div class="carousel-container" #container>
-        <button class="nav-btn" (click)="scrollLeft()" *ngIf="showPrevButton">
+        <button class="nav-btn nav-btn-left" (click)="scrollLeft()" *ngIf="showPrevButton">
           <mat-icon>chevron_left</mat-icon>
         </button>
         <div class="carousel" #carousel>
@@ -38,7 +38,7 @@
             <span class="tag-label">All</span>
           </button>
           <button
-            #btn
+            [id]="tag.name"
             class="tag-btn"
             *ngFor="let tag of filterTags; index as i"
             [ngClass]="{active: selectedTagIndex === i}"
@@ -48,7 +48,7 @@
             <span class="tag-label">{{tag.name}}</span>
           </button>
         </div>
-        <button class="nav-btn" (click)="scrollRight()" *ngIf="showNextButton">
+        <button class="nav-btn nav-btn-right" (click)="scrollRight()" *ngIf="showNextButton">
           <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
@@ -134,8 +134,17 @@
       </div>
     </div>
     <div class="completed-todos">
-      <div class="todo-label">Completed</div>
-      <div class="todo-items">
+      <div class="todo-label">
+        <span>Completed</span>
+        <span *ngIf="collapseCompletedTsks && completedTasks.length !== 0" class="count-badge">{{completedTasks.length}}</span>
+        <mat-icon class="no-select collapse-icon btn-icon" *ngIf="completedTasks.length !== 0" [title]="!collapseCompletedTsks? 'Collapse' : 'Expand'" (click)="collapseCmpltdTsks()" [ngClass]="!collapseCompletedTsks? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
+      </div>
+      <div *ngIf="completedTasks.length == 0">
+        <div>
+          <div class="todo-item-label todo-item-label_msg">Mark a task done to get it completed</div>
+        </div>
+      </div>
+      <div class="todo-items" *ngIf="!collapseCompletedTsks" [@slideTopBottom]>
         <div cdkDropList
           class="todoIncomplete example-list"
           #completedTodos="cdkDropList"
@@ -144,11 +153,6 @@
           cdkDropListSortingDisabled
           [@.disabled]="disableAnimations"
           >
-          <div *ngIf="completedTasks.length == 0">
-            <div>
-              <div class="todo-item-label todo-item-label_msg">Mark a task done to get it completed</div>
-            </div>
-          </div>
           <div cdkDrag
             class="todo-container"
             *ngFor="let task of completedTasks; index as i"
@@ -179,6 +183,7 @@
                     </div>
                   </span>
                 </div>
+                <pre class="todo-note-label todo-note-label_completed text-overflow">{{task.note}}</pre>
                 <div class="todo-item-tags-mobile">
                   <div class="tag-chip" *ngFor="let tag of task.tags">{{tag.name}}</div>
                 </div>
@@ -193,9 +198,10 @@
       <hr>
       <div class="todo-item-label todo-item-label_msg todo-item-label_future">
         Plan tomorrow's success right here
-        <mat-icon class="no-select collapse-icon btn-icon" [title]="!collapsed? 'Collapse' : 'Expand'" (click)="collapse()" [ngClass]="!collapsed? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
+        <span *ngIf="collapseFutureTsks && futureTasks.length !== 0" class="count-badge">{{totalFutureTaskCount}}</span>
+        <mat-icon class="no-select collapse-icon btn-icon" [title]="!collapseFutureTsks? 'Collapse' : 'Expand'" (click)="collapseFtreTsks()" [ngClass]="!collapseFutureTsks? 'rotate-down' : 'rotate-up'">keyboard_arrow_down</mat-icon>
       </div>
-      <div class="future-todos" *ngIf="!collapsed" [@slideTopBottom]>
+      <div class="future-todos" *ngIf="!collapseFutureTsks" [@slideTopBottom]>
         <div *ngFor="let tab of futureTasks; index as i; trackBy: trackByFn">
           <div cdkDropList class="example-list">
             <div class="todo-label">{{tab.label}}</div>

@@ -39,6 +39,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   headerDesc: string = '';
   btnLabel: string = '';
   disabled = false;
+  deletedTask: Task;
 
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
@@ -67,6 +68,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     this.todoForm = new FormGroup({
       name: new FormControl(''),
       tags: new FormControl([]),
+      status: new FormControl(false),
       note: new FormControl(''),
       emoji: new FormControl('✨'),
       date: new FormControl(new Date()),
@@ -117,6 +119,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   patchFormData() {
     this.todoForm.get('name').patchValue(this.objTask.name);
     this.todoForm.get('note').patchValue(this.objTask.note);
+    this.todoForm.get('status').patchValue(this.objTask.checked);
     this.selectedEmoji = this.objTask.emoji;
     this.todoForm.get('date').patchValue(new Date(this.objTask.dateCreated));
     this.todoForm.get('time').patchValue(new Date(this.objTask.dateCreated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
@@ -381,6 +384,47 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         this.bottomSheet.dismiss(true);
       }
     }
+  }
+
+  // undoDelete() {
+  //   if (this.deletedTask) {
+  //     this.todoService.restoreTask(this.deletedTask);
+  //     this.deletedTask = null;
+  //     this.snackBar.open('The task was restored 🔄️', 'OK', {
+  //       duration: 2000,
+  //       verticalPosition: 'top'
+  //     });
+  //   }
+  // }
+
+  onDelete() {
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
+      width: '420px',
+      autoFocus: false,
+      restoreFocus: false,
+      data: {
+        type: 'ALERT',
+        label: `Delete Task`,
+        message: `Are you sure you want to delete this task? This operation cannot be undone.`,
+        btnLabelYes: `Yes, Delete`,
+        btnLabelNo: `No, Keep it`
+      }
+    });
+    confirmDialog.afterClosed().subscribe(result => {
+      if(result === true) {
+        this.deletedTask = this.objTask;
+        this.todoService.deleteTasks(this.objTask);
+        this.bottomSheet.dismiss(true);
+        let snackBarRef = this.snackBar.open('The task was deleted 🗑️', '✖', {
+          duration: 2000,
+          verticalPosition: 'top'
+        });
+        // snackBarRef.onAction().subscribe(() => {
+        //   this.undoDelete();
+        //   this.bottomSheet.dismiss(true);
+        // });
+      }
+    });
   }
 
   calculateDate() {

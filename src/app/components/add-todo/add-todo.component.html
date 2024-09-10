@@ -11,26 +11,39 @@
           <input matInput  placeholder="Task" type="text" formControlName="name">
         </mat-form-field>
 
-        <div class="tags">
-          <mat-chip-grid #chipGrid formControlName="tags">
-            <span class="chips-layout">
+        <span class="action-buttons">
+          <div class="tags">
+            <mat-chip-grid #chipGrid formControlName="tags">
+              <span class="chips-layout">
 
-              <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="tag.isSelected">
-                {{tag.name}}
-                <button matChipRemove>
-                  <mat-icon class="chip-icon">close</mat-icon>
-                </button>
-              </mat-chip-option>
+                <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="tag.isSelected">
+                  {{tag.name}}
+                  <button matChipRemove>
+                    <mat-icon class="chip-icon">close</mat-icon>
+                  </button>
+                </mat-chip-option>
 
-              <div [style.display]="tagInput? '' : 'none'" class="add-tag tag-input mat-mdc-standard-chip">
-                <input id="chip-input" #chipInput class="mdc-evolution-chip__text-label" style="flex-basis: min-content;" [matChipInputFor]="chipGrid" (matChipInputTokenEnd)="addTag($event)"/>
-                <mat-icon class="add-icon" title="Add" (click)="addTag(chipInput)">add_circle</mat-icon>
-              </div>
+                <div [style.display]="tagInput? '' : 'none'" class="add-tag tag-input mat-mdc-standard-chip">
+                  <input id="chip-input" #chipInput class="mdc-evolution-chip__text-label" style="flex-basis: min-content;" [matChipInputFor]="chipGrid" (matChipInputTokenEnd)="addTag($event)"/>
+                  <mat-icon class="add-icon" title="Add" (click)="addTag(chipInput)">add_circle</mat-icon>
+                </div>
 
-              <div [style.display]="!tagInput? '' : 'none'" class="add-tag" style="background: none;" (click)="toggleTagInput(chipInput)"><mat-icon>add</mat-icon>Add Tag</div>
-            </span>
-          </mat-chip-grid>
-        </div>
+                <div [style.display]="!tagInput? '' : 'none'" class="add-tag" style="background: none;" (click)="toggleTagInput(chipInput)"><mat-icon>add</mat-icon>Add Tag</div>
+              </span>
+            </mat-chip-grid>
+          </div>
+          <div *ngIf="editMode || restoreMode" style="display: flex; flex-direction: column; margin-top: -18px; gap: 6px;">
+            <div style="display: flex;">
+              <span class="todo-item-label" style="font-size: 14px; margin-top: 2px; margin-right: 8px;">Status</span>
+              <label class="container no-select" style="position: relative; margin-right: 10px;">
+                <input type="checkbox" [checked]="objTask.checked" formControlName="status">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <span *ngIf="todoForm.value.status" class="todo-item-label" style="font-size: 12px; text-align: center;">Complete</span>
+            <span *ngIf="!todoForm.value.status" class="todo-item-label" style="font-size: 12px; text-align: center;">Incomplete</span>
+          </div>
+        </span>
 
         <span style="display: flex; gap: 10px;">
           <div class="emojis">
@@ -117,9 +130,13 @@
         </span>
 
         <input type="hidden" name="_gotcha" style="display:none !important">
-        <button type="submit" matInput class="submit-btn" tabindex="0" [disabled]="disabled" (click)="onSubmit()">{{btnLabel}}
-        <span class="mui-span"></span>
-      </button>
+        <span class="action-buttons">
+          <button type="submit" title="Save Changes" matInput class="submit-btn" tabindex="0" [disabled]="disabled" (click)="onSubmit()">{{btnLabel}}</button>
+          <button *ngIf="editMode || restoreMode" title="Delete Task" matInput class="submit-btn delete-btn" tabindex="0" [disabled]="disabled" (click)="onDelete()">
+            <mat-icon class="mat-18">delete_forever</mat-icon>
+            <!-- <img src="../../../assets/trash.svg" alt="delete"> -->
+          </button>
+        </span>
     </div>
   </form>
 </div>

@@ -36,7 +36,8 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   // bitMoreTimeTasks: Task[] = [];
   darkMode: any;
   selectedEmoji: any;
-  collapsed: boolean = true;
+  collapseCompletedTsks: boolean = true;
+  collapseFutureTsks: boolean = true;
   isOverDelete = false;
   filterTags: any = [];
   selectedTagIndex = -1;
@@ -44,6 +45,7 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   showNextButton = false;
 
   @ViewChild('carousel') carousel: any;
+  totalFutureTaskCount: number;
 
   constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
     this.getDeviceTheme();
@@ -85,8 +87,10 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     if(this.isDarkMode == true){
       this.todoService.toggleDarkMode(true);
     }
-    this.collapsed = JSON.parse(localStorage.getItem('collapse') as string);
+    this.collapseFutureTsks = JSON.parse(localStorage.getItem('collapseFutureTsks') as string);
+    this.collapseCompletedTsks = JSON.parse(localStorage.getItem('collapseCompletedTsks') as string);
     this.getlocalTags();
+    this.getSelectedTag();
 
     this.todoService.getClickEvent().subscribe(()=>{
       this.getlocalTags();
@@ -94,11 +98,11 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   }
 
   sortFutureTasks() {
-    const futureTasks: { label: string, tasks: Task[] }[] = [
-      { label: 'Tomorrow', tasks: [] },
-      { label: 'This Week', tasks: [] },
-      { label: 'This Month', tasks: [] },
-      { label: 'Quite a bit more time', tasks: [] },
+    const futureTasks: { label: string, count: 0, tasks: Task[] }[] = [
+      { label: 'Tomorrow', count: 0, tasks: [] },
+      { label: 'This Week', count: 0, tasks: [] },
+      { label: 'This Month', count: 0, tasks: [] },
+      { label: 'Quite a bit more time', count: 0, tasks: [] },
     ];
 
     this.futureTasks.forEach((task: Task) => {
@@ -107,17 +111,22 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
 
       if (moment(task.dateCreated).isSame(tomorrow, 'day')) {
         futureTasks[0].tasks.push(task); // Index 0 corresponds to 'Tomorrow'
+        futureTasks[0].count++;
       } else if (moment(task.dateCreated).isBefore(date.clone().isoWeekday(7))) {
         futureTasks[1].tasks.push(task); // Index 1 corresponds to 'This Week'
+        futureTasks[1].count++;
       } else if (moment(task.dateCreated).isBefore(date.clone().endOf('month'))) {
         futureTasks[2].tasks.push(task); // Index 2 corresponds to 'This Month'
+        futureTasks[2].count++;
       } else {
         futureTasks[3].tasks.push(task); // Index 3 corresponds to 'Quite a bit more time'
+        futureTasks[3].count++;
       }
     });
 
     this.futureTasks = futureTasks.filter(category => category.tasks.length > 0);
-    // console.log("future tasks", futureTasks);
+    this.totalFutureTaskCount = futureTasks.reduce((acc, category) => acc + category.count, 0);
+    console.log("future tasks", futureTasks);
   }
 
   toggleTaskStatus(task: Task) {
@@ -128,9 +137,15 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     const bottomSheetRef = this.bottomSheet.open(AddTodoComponent);
     bottomSheetRef.afterDismissed().subscribe((refresh) => {
       if(refresh){
-        this.scrollToStart();
-        this.selectedTagIndex = -1;
-        this.getlocalTags();
+        // this.scrollToStart();
+        // this.selectedTagIndex = -1;
+        let selectedTag = this.filterTags[this.selectedTagIndex];
+        if(this.selectedTagIndex == -1){
+          selectedTag = {name: 'All'}
+        }
+        const tasksList = this.findTasksWithTag(JSON.parse(localStorage.getItem('tasks')), selectedTag);
+        this.todoService.loadTasksFromLocalStorage(tasksList);
+        this.getlocalTags(1);
       }
     });
   }
@@ -140,8 +155,10 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     const bottomSheetRef = this.bottomSheet.open(AddTodoComponent, { data: {editMode: true, task} });
     bottomSheetRef.afterDismissed().subscribe((refresh) => {
       if(refresh){
-        this.scrollToStart();
-        this.selectedTagIndex = -1;
+        // this.scrollToStart();
+        // this.selectedTagIndex = -1;
+        this.allTasks = JSON.parse(localStorage.getItem('tasks'));
+        this.getSelectedTag();
         this.getlocalTags();
       }
     });
@@ -308,11 +325,13 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       this.disableAnimations = true;
       let task = event.detail
       this.deletedTask = task;
-      this.scrollToStart();
-      this.selectedTagIndex = -1;
+      // this.scrollToStart();
+      // this.selectedTagIndex = -1;
       // this.todoService.loadTasksFromLocalStorage();
       this.todoService.deleteTasks(task);
+      this.allTasks = JSON.parse(localStorage.getItem('tasks'));
       this.getlocalTags();
+      this.getSelectedTag();
       setTimeout(() => {
         this.disableAnimations = false;
       }, 100);
@@ -324,6 +343,7 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       snackBarRef.onAction().subscribe(() => {
         this.undoDelete();
         this.getlocalTags();
+        this.getSelectedTag();
       });
 
     }
@@ -361,9 +381,38 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  getlocalTags() {
+  getSelectedTag(){
+    const tagIndex = JSON.parse(localStorage.getItem('selectedTag') as string);
+    if(tagIndex !== null){
+      this.selectedTagIndex = tagIndex;
+      var selectedTag = this.filterTags[tagIndex];
+      if(selectedTag == undefined){
+        this.selectedTagIndex = -1;
+        selectedTag = {name: 'All'}
+        localStorage.setItem('selectedTag', this.selectedTagIndex.toString())
+      }
+      const tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
+      this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+      setTimeout(() => {
+        let el = document.getElementById(selectedTag.name)
+        el.scrollIntoView({behavior: "smooth",block: "start",inline: "center"});
+      }, 10);
+    } else {
+      this.selectedTagIndex = -1;
+    }
+    console.log(this.selectedTagIndex);
+  }
+
+  getlocalTags(flag?) {
+    let tasks = [];
     let tagCounts = {};
-    this.allTasks.forEach(task => {
+    if(flag) {
+      tasks = JSON.parse(localStorage.getItem('tasks'));
+    } else {
+      tasks = this.allTasks;
+    }
+    // const taskLists = JSON.parse(localStorage.getItem('tasks'));
+    tasks.forEach(task => {
       task.tags.forEach(tag => {
         if (!task.archived) {
           tagCounts[tag.name] = (tagCounts[tag.name] || 0) + 1;
@@ -386,11 +435,13 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       }
       return 0;
     });
+    console.log('filterTags',this.filterTags);
   }
 
   onSelectTags(index){
     if(this.selectedTagIndex === index) return;
     this.selectedTagIndex = index;
+    localStorage.setItem('selectedTag', this.selectedTagIndex.toString());
     this.todoService.loadTasksFromLocalStorage();
     let tasksList = [];
     let selectedTag = this.filterTags[index];
@@ -432,9 +483,14 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     this.showNextButton = totalWidth > containerWidth;
   }
 
-  collapse() {
-    this.collapsed = !this.collapsed;
-    localStorage.setItem( 'collapse', this.collapsed.toString());
+  collapseFtreTsks() {
+    this.collapseFutureTsks = !this.collapseFutureTsks;
+    localStorage.setItem( 'collapseFutureTsks', this.collapseFutureTsks.toString());
+  }
+
+  collapseCmpltdTsks() {
+    this.collapseCompletedTsks = !this.collapseCompletedTsks;
+    localStorage.setItem( 'collapseCompletedTsks', this.collapseCompletedTsks.toString());
   }
 
   trackByFn(index: number, item: any): string {
