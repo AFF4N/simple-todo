@@ -32,16 +32,22 @@
               </span>
             </mat-chip-grid>
           </div>
-          <div *ngIf="editMode || restoreMode" style="display: flex; flex-direction: column; margin-top: -18px; gap: 6px;">
-            <div style="display: flex;">
-              <span class="todo-item-label" style="font-size: 14px; margin-top: 2px; margin-right: 8px;">Status</span>
-              <label class="container no-select" style="position: relative; margin-right: 10px;">
+          <div *ngIf="editMode || restoreMode" style="margin-top: -18px">
+            <div class="status-tag" [ngClass]="objTask.checked ? 'complete' : 'incomplete'">
+              <!-- <span class="todo-item-label" style="font-size: 14px; margin-top: 2px; margin-right: 8px;">Status</span> -->
+              <span *ngIf="todoForm.value.status" class="todo-item-label status-label">
+                Complete
+                <mat-icon class="chip-icon">check</mat-icon>
+              </span>
+              <span *ngIf="!todoForm.value.status" class="todo-item-label status-label">
+                Incomplete
+                <mat-icon class="chip-icon">close</mat-icon>
+              </span>
+              <!-- <label class="container no-select" style="position: relative; margin-right: 10px;">
                 <input type="checkbox" [checked]="objTask.checked" formControlName="status">
                 <span class="checkmark"></span>
-              </label>
+              </label> -->
             </div>
-            <span *ngIf="todoForm.value.status" class="todo-item-label" style="font-size: 12px; text-align: center;">Complete</span>
-            <span *ngIf="!todoForm.value.status" class="todo-item-label" style="font-size: 12px; text-align: center;">Incomplete</span>
           </div>
         </span>
 

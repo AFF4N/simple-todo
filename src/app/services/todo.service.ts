@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, Subject, throwError } from 'rxjs';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import { Firestore, collection, addDoc, doc, deleteDoc, updateDoc, collectionData, query, where } from '@angular/fire/firestore';
 import * as moment from 'moment';
 
 @Injectable({
@@ -24,8 +26,66 @@ export class TodoService {
   archivedTasksSubject = new BehaviorSubject<Task[]>(this.archivedTasks);
   subject = new Subject<void>();
 
-  constructor() {
-    this.loadTasksFromLocalStorage();
+  // private dbPath = '/todos';
+  // todosRef: AngularFirestoreCollection<Task>;
+  private todosCollection = this.db.collection('todos');
+  // todos: Observable<Task[]>;
+
+  constructor(private db: AngularFirestore) {
+    // this.loadTasksFromLocalStorage();
+    // this.todosRef = db.collection(this.dbPath);
+    // this.todosCollection = db.doc('todos');
+    // this.todos = this.todosCollection.valueChanges();
+  }
+
+  // Fetch all todos
+  getTodos(): Observable<Task[]> {
+    return this.todosCollection.valueChanges({ idField: 'id' }).pipe(
+      catchError((error) => {
+        console.error('Error fetching todos:', error);
+        return throwError(() => new Error('Failed to fetch todos.')); // Handle error
+      })
+    ) as Observable<Task[]>;
+  }
+
+  // Fetch a single todo by ID
+  getTodoById(id: string): Observable<Task> {
+    return this.todosCollection.doc(id).valueChanges() as Observable<Task>;
+  }
+
+  async create(todo: Task): Promise<void> {
+    const id = this.db.createId();
+    try {
+      await this.todosCollection.doc(id).set({ ...todo, id });
+    } catch (error) {
+      console.error('Error adding todo:', error);
+      throw new Error('Failed to add todo'); // Throw error to propagate it up
+    }
+  }
+
+  async update(id: string, data: any): Promise<void> {
+    try {
+      await this.todosCollection.doc(id).update(data);
+    } catch (error) {
+      console.error('Error updating todo:', error);
+      throw new Error('Failed to update todo');
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await this.todosCollection.doc(id).delete();
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+      throw new Error('Failed to delete todo');
+    }
+  }
+
+  // Fetch tasks associated with a specific tag (by tag ID)
+  getTasksByTag(tag: { name: string }): Observable<any[]> {
+    return this.db.collection<any>('todos', ref =>
+      ref.where('tags', 'array-contains', tag)
+    ).valueChanges({ idField: 'id' });
   }
 
   sendClickEvent() {
@@ -151,6 +211,7 @@ export class TodoService {
 
   toggleTaskStatus(task: Task) {
     task.checked = !task.checked;
+    this.update(task.id, task);
     this.updateStatusArrays();
     this.saveTasksToLocalStorage();
   }

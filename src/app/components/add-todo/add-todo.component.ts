@@ -9,6 +9,7 @@ import { Task } from 'src/app/models/task.model';
 import { NotificationService } from 'src/app/shared/notification/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import { TagService } from 'src/app/services/tag.service';
 @Component({
   selector: 'app-add-todo',
   templateUrl: './add-todo.component.html',
@@ -44,6 +45,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private bottomSheet: MatBottomSheet,
+    private tagService: TagService,
     private todoService: TodoService,
     private snackBar: MatSnackBar,
     private notification: NotificationService,
@@ -240,7 +242,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
             // console.log(tasks);
             localStorage.setItem('tasks', JSON.stringify(tasks));
             this.todoService.loadTasksFromLocalStorage();
-            this.todoService.updateStatusArrays();
+            // this.todoService.updateStatusArrays();
             this.todoService.sendClickEvent();
           }
           this.notification.showLoader(false);
@@ -263,6 +265,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       this.tags.push(tag);
       this.tagInput = false;
       event.chipInput?.clear();
+      this.tagService.create(tag).then(res => {
+        console.log('Created new tag successfully!', res.data());
+      });
       localStorage.setItem('tags', JSON.stringify(this.tags));
     }
     // console.log('local tags array:', this.tags);
@@ -364,6 +369,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       if(this.validateTask(todo)){
         this.disabled = true;
         this.todoService.addTask(todo);
+        this.todoService.create(todo).then(() => {
+          console.log('Created new item successfully!');
+        });
         this.bottomSheet.dismiss(true);
       }
     } else { // Edit or Restore Mode
@@ -381,6 +389,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       if(this.validateTask(todo)){
         this.disabled = true;
         this.todoService.updateTask(todo);
+        this.todoService.update(todo.id, todo).then(() => {
+          console.log('Created new item successfully!');
+        });
         this.bottomSheet.dismiss(true);
       }
     }

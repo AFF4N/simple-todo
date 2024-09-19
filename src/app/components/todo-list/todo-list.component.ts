@@ -10,8 +10,9 @@ import { CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragMove, CdkDragStart, CdkDr
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { taskAnimations, deleteBtnAnimation, slideTopBottom } from 'src/assets/animations';
 import * as moment from 'moment';
-import { distinctUntilChanged } from 'rxjs/operators';
-
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { NotificationService } from 'src/app/shared/notification/notification.service';
+import { TagService } from 'src/app/services/tag.service';
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
@@ -47,7 +48,13 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   @ViewChild('carousel') carousel: any;
   totalFutureTaskCount: number;
 
-  constructor(private bottomSheet: MatBottomSheet, private todoService: TodoService, private snackBar: MatSnackBar) {
+  constructor(
+    private bottomSheet: MatBottomSheet,
+    private todoService: TodoService,
+    private tagService: TagService,
+    private snackBar: MatSnackBar,
+    private notification: NotificationService
+  ) {
     this.getDeviceTheme();
     this.checkActivePWAState();
   }
@@ -58,16 +65,19 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       return JSON.stringify(prev) === JSON.stringify(curr);
     }))
     .subscribe(tasks => this.allTasks = tasks);
+
     this.todoService.completedTasksSubject
     .pipe(distinctUntilChanged((prev, curr) => {
       return JSON.stringify(prev) === JSON.stringify(curr);
     }))
     .subscribe((completeTasks: any[]) => this.completedTasks = completeTasks);
+
     this.todoService.incompleteTasksSubject
     .pipe(distinctUntilChanged((prev, curr) => {
       return JSON.stringify(prev) === JSON.stringify(curr);
     }))
     .subscribe((incompleteTasks: any[]) => this.incompleteTasks = incompleteTasks);
+
     this.todoService.futureTasksSubject
     .pipe(distinctUntilChanged((prev, curr) =>  {
       return JSON.stringify(prev) === JSON.stringify(curr);
@@ -89,8 +99,22 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     }
     this.collapseFutureTsks = JSON.parse(localStorage.getItem('collapseFutureTsks') as string);
     this.collapseCompletedTsks = JSON.parse(localStorage.getItem('collapseCompletedTsks') as string);
-    this.getlocalTags();
-    this.getSelectedTag();
+
+    this.notification.showLoader(true);
+    this.todoService.getTodos().subscribe({
+      next: (tasks) => {
+        console.log('Data fetched from FireStore: ', tasks);
+        this.allTasks = tasks;
+        this.todoService.loadTasksFromLocalStorage(this.allTasks)
+        this.getlocalTags();
+        this.getSelectedTag();
+        this.notification.showLoader(false);
+      },
+      error: (error) => {
+        console.error('Error fetching tasks by tag:', error)
+        this.notification.showLoader(false);
+      }
+    });
 
     this.todoService.getClickEvent().subscribe(()=>{
       this.getlocalTags();
@@ -139,12 +163,12 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       if(refresh){
         // this.scrollToStart();
         // this.selectedTagIndex = -1;
-        let selectedTag = this.filterTags[this.selectedTagIndex];
-        if(this.selectedTagIndex == -1){
-          selectedTag = {name: 'All'}
-        }
-        const tasksList = this.findTasksWithTag(JSON.parse(localStorage.getItem('tasks')), selectedTag);
-        this.todoService.loadTasksFromLocalStorage(tasksList);
+        // let selectedTag = this.filterTags[this.selectedTagIndex];
+        // if(this.selectedTagIndex == -1){
+        //   selectedTag = {name: 'All'}
+        // }
+        // const tasksList = this.findTasksWithTag(JSON.parse(localStorage.getItem('tasks')), selectedTag);
+        // this.todoService.loadTasksFromLocalStorage(tasksList);
         this.getlocalTags(1);
       }
     });
@@ -329,6 +353,7 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       // this.selectedTagIndex = -1;
       // this.todoService.loadTasksFromLocalStorage();
       this.todoService.deleteTasks(task);
+      this.todoService.delete(task.id);
       this.allTasks = JSON.parse(localStorage.getItem('tasks'));
       this.getlocalTags();
       this.getSelectedTag();
@@ -391,8 +416,15 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
         selectedTag = {name: 'All'}
         localStorage.setItem('selectedTag', this.selectedTagIndex.toString())
       }
-      const tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
-      this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+      // const tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
+      // this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+      let request = { name: selectedTag.name }
+      this.todoService.getTasksByTag(request).subscribe({
+        next: (tasks) => {
+          this.todoService.loadTasksFromLocalStorage(tasks); // send the queried tasks
+        },
+        error: (error) => console.error('Error fetching tasks by tag:', error)
+      });
       setTimeout(() => {
         let el = document.getElementById(selectedTag.name)
         el.scrollIntoView({behavior: "smooth",block: "start",inline: "center"});
@@ -404,6 +436,12 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   }
 
   getlocalTags(flag?) {
+    // this.tagService.getTags().subscribe(data => {
+    //   console.log('Tags Data fetched from FireStore: ', data);
+    //   tags = data
+    //   this.notification.showLoader(false);
+    // });
+
     let tasks = [];
     let tagCounts = {};
     if(flag) {
@@ -442,14 +480,26 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     if(this.selectedTagIndex === index) return;
     this.selectedTagIndex = index;
     localStorage.setItem('selectedTag', this.selectedTagIndex.toString());
-    this.todoService.loadTasksFromLocalStorage();
+    // this.todoService.loadTasksFromLocalStorage();
     let tasksList = [];
     let selectedTag = this.filterTags[index];
     if(index == -1) {
       selectedTag = {name: 'All'}
+      this.todoService.getTodos().subscribe(data => {
+        console.log('Data fetched from FireStore: ', data);
+        this.todoService.loadTasksFromLocalStorage(data)
+        this.notification.showLoader(false);
+      });
     } else {
-      tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
-      this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+      // tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
+      let request = { name: selectedTag.name }
+      this.todoService.getTasksByTag(request).subscribe({
+        next: (tasks) => {
+          tasksList = tasks
+          this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+        },
+        error: (error) => console.error('Error fetching tasks by tag:', error)
+      });
     }
   }
 

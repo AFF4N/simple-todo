@@ -18,7 +18,10 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatDateFormats, DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { NotificationComponent } from './shared/notification/notification.component';
+import { environment } from './environments/environments';
 
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -51,6 +54,8 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     BrowserAnimationsModule,
     PickerComponent,
     EmojiModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFirestoreModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
