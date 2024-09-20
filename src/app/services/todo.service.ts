@@ -82,7 +82,7 @@ export class TodoService {
   }
 
   // Fetch tasks associated with a specific tag (by tag ID)
-  getTasksByTag(tag: { name: string }): Observable<any[]> {
+  getTasksByTag(tag: { id: string, name: string }): Observable<any[]> {
     return this.db.collection<any>('todos', ref =>
       ref.where('tags', 'array-contains', tag)
     ).valueChanges({ idField: 'id' });
@@ -95,70 +95,103 @@ export class TodoService {
     return this.subject.asObservable();
   }
 
-  loadTasksFromLocalStorage(queriedTasks?) {
-    const tasksData = localStorage.getItem('tasks');
-    const dayStart = moment().startOf('day');
-    const dayEnd = moment().endOf('day');
-    if (tasksData) {
-      this.rootData = [...JSON.parse(tasksData)];
-      if(queriedTasks && queriedTasks.length !== 0){
-        this.filtersActive = true;
-        this.allTasks = queriedTasks; // tasks with selected tag
-      } else {
-        this.filtersActive = false;
-        this.allTasks = structuredClone(this.rootData);
-      }
-      this.allTasks = this.allTasks.map((task) => {
-        const taskDate = moment(task.dateCreated);
-        if(taskDate.isBefore(dayEnd) || taskDate.isAfter(dayStart)) {
-          task.type = 'today';
-          task.archived = false;
-        }
-        if(taskDate.isBefore(dayStart)) {
-          task.type = 'archived';
-          task.archived = true;
-        }
-        if(taskDate.isAfter(dayEnd)) {
-          task.type = 'future';
-          task.archived = false;
-        }
-        return task;
-      });
-      this.updateStatusArrays();
-    }
-  }
-
-  updateStatusArrays() {
-    console.log('rootData', this.rootData);
-    console.log('alltasks', this.allTasks);
-    console.log(' ---------- ');
-
-    if(this.filtersActive){
-      this.rootData = this.mergeArrays(this.allTasks, this.rootData);
-    } else {
-      this.rootData = this.allTasks;
-    }
-
+  renderAppData(tasks: Task[]) {
+    this.allTasks = this.appendTaskTypes(tasks);
+    // completed tasks
     this.completedTasks = this.allTasks
     .filter( (task) => task.checked && !task.archived)
     .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+    // incompleted tasks
     this.incompleteTasks = this.allTasks
     .filter( (task) => !task.checked && !task.archived && task.type == 'today')
     .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+    // future tasks
     this.futureTasks = this.allTasks
     .filter( (task) => !task.checked && !task.archived && task.type == 'future')
     .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
-
-    this.archivedTasks = this.rootData
+    // archived tasks
+    this.archivedTasks = this.allTasks
     .filter( (task) => task.archived == true)
     .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
 
+    // forwarding to the subscriptions
     this.completedTasksSubject.next(this.completedTasks);
     this.incompleteTasksSubject.next(this.incompleteTasks);
     this.futureTasksSubject.next(this.futureTasks);
     this.archivedTasksSubject.next(this.archivedTasks);
     this.allTasksSubject.next(this.allTasks);
+
+    this.saveTasksToLocalStorage();
   }
+
+  // loadTasksFromLocalStorage(queriedTasks?) {
+  //   const localData = localStorage.getItem('tasks');
+  //   if (localData) {
+  //     this.rootData = [...JSON.parse(localData)];
+  //     if(queriedTasks && queriedTasks.length !== 0){
+  //       this.filtersActive = true;
+  //       this.allTasks = queriedTasks; // tasks with selected tag
+  //     } else {
+  //       this.filtersActive = false;
+  //       this.allTasks = structuredClone(this.rootData);
+  //     }
+  //     this.allTasks = this.appendTaskTypes(this.allTasks)
+  //     this.updateStatusArrays();
+  //   }
+  // }
+
+  appendTaskTypes(tasks: any) {
+    const dayStart = moment().startOf('day');
+    const dayEnd = moment().endOf('day');
+    return tasks.map((task) => {
+      const taskDate = moment(task.dateCreated);
+      if(taskDate.isBefore(dayEnd) || taskDate.isAfter(dayStart)) {
+        task.type = 'today';
+        task.archived = false;
+      }
+      if(taskDate.isBefore(dayStart)) {
+        task.type = 'archived';
+        task.archived = true;
+      }
+      if(taskDate.isAfter(dayEnd)) {
+        task.type = 'future';
+        task.archived = false;
+      }
+      return task;
+    });
+  }
+
+  // updateStatusArrays() {
+  //   console.log('rootData', this.rootData);
+  //   console.log('alltasks', this.allTasks);
+  //   console.log(' ---------- ');
+
+  //   if(this.filtersActive){
+  //     this.rootData = this.mergeArrays(this.allTasks, this.rootData);
+  //   } else {
+  //     this.rootData = this.allTasks;
+  //   }
+
+  //   this.completedTasks = this.allTasks
+  //   .filter( (task) => task.checked && !task.archived)
+  //   .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+  //   this.incompleteTasks = this.allTasks
+  //   .filter( (task) => !task.checked && !task.archived && task.type == 'today')
+  //   .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+  //   this.futureTasks = this.allTasks
+  //   .filter( (task) => !task.checked && !task.archived && task.type == 'future')
+  //   .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+
+  //   this.archivedTasks = this.rootData
+  //   .filter( (task) => task.archived == true)
+  //   .sort((a,b) =>  Number(new Date(a.dateCreated)) - Number(new Date(b.dateCreated)));
+
+  //   this.completedTasksSubject.next(this.completedTasks);
+  //   this.incompleteTasksSubject.next(this.incompleteTasks);
+  //   this.futureTasksSubject.next(this.futureTasks);
+  //   this.archivedTasksSubject.next(this.archivedTasks);
+  //   this.allTasksSubject.next(this.allTasks);
+  // }
 
   mergeArrays(updateArray, originalArray) {
     // Create a map from originalArray based on some identifier
@@ -183,8 +216,8 @@ export class TodoService {
   }
 
   saveTasksToLocalStorage() {
-    console.log("data saved to LocalStorage:", this.rootData);
-    localStorage.setItem('tasks', JSON.stringify(this.rootData));
+    console.log("data saved to LocalStorage:", this.allTasks);
+    localStorage.setItem('tasks', JSON.stringify(this.allTasks));
   }
 
   deleteAllTasksfromLocalStorage() {
@@ -192,28 +225,28 @@ export class TodoService {
     location.reload();
   }
 
-  addTask(task: Task) {
-    this.allTasks.push(task);
-    this.updateStatusArrays();
-    this.saveTasksToLocalStorage();
-  }
+  // addTask(task: Task) {
+  //   this.allTasks.push(task);
+  //   this.updateStatusArrays();
+  //   this.saveTasksToLocalStorage();
+  // }
 
-  updateTask(task: Task) {
-    const index = this.allTasks.findIndex(todo => todo.id === task.id);
-    if (index !== -1) {
-      this.allTasks[index] = { ...this.allTasks[index], ...task };
-    } else {
-      console.error(`Todo with ID ${task.id} not found.`);
-    }
-    this.updateStatusArrays();
-    this.saveTasksToLocalStorage();
-  }
+  // updateTask(task: Task) {
+  //   const index = this.allTasks.findIndex(todo => todo.id === task.id);
+  //   if (index !== -1) {
+  //     this.allTasks[index] = { ...this.allTasks[index], ...task };
+  //   } else {
+  //     console.error(`Todo with ID ${task.id} not found.`);
+  //   }
+  //   this.updateStatusArrays();
+  //   this.saveTasksToLocalStorage();
+  // }
 
   toggleTaskStatus(task: Task) {
     task.checked = !task.checked;
     this.update(task.id, task);
-    this.updateStatusArrays();
-    this.saveTasksToLocalStorage();
+    // this.updateStatusArrays();
+    // this.saveTasksToLocalStorage();
   }
 
   deleteArchives(archivedGroup: any){
@@ -224,20 +257,20 @@ export class TodoService {
     let archivesdltfromAll = this.rootData.filter((task) => !archives2dlt.some(archive => archive.dateCreated === task.dateCreated));
     // console.log(archivesdltfromAll);
     localStorage.setItem('tasks', JSON.stringify(archivesdltfromAll));
-    this.loadTasksFromLocalStorage();
+    // this.loadTasksFromLocalStorage();
   }
 
-  deleteTasks(task: Task) {
-    this.allTasks = this.allTasks.filter(todo => todo.id !== task.id);
-    this.updateStatusArrays();
-    this.rootData = this.rootData.filter(todo => todo.id !== task.id);
-    this.saveTasksToLocalStorage();
-  }
+  // deleteTasks(task: Task) {
+  //   this.allTasks = this.allTasks.filter(todo => todo.id !== task.id);
+  //   this.updateStatusArrays();
+  //   this.rootData = this.rootData.filter(todo => todo.id !== task.id);
+  //   this.saveTasksToLocalStorage();
+  // }
 
   restoreTask(task: Task) { // undo deleted task
     this.rootData.push(task);
     this.saveTasksToLocalStorage();
-    this.loadTasksFromLocalStorage();
+    // this.loadTasksFromLocalStorage();
   }
 
   toggleDarkMode(darkMode: boolean) {

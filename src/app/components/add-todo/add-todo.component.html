@@ -16,7 +16,7 @@
             <mat-chip-grid #chipGrid formControlName="tags">
               <span class="chips-layout">
 
-                <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="tag.isSelected">
+                <mat-chip-option *ngFor="let tag of tags" (removed)="removeTag(tag)" (click)="onSelectTag(tag)" [selected]="isTagSelected(tag.id)">
                   {{tag.name}}
                   <button matChipRemove>
                     <mat-icon class="chip-icon">close</mat-icon>
@@ -32,11 +32,11 @@
               </span>
             </mat-chip-grid>
           </div>
-          <div *ngIf="editMode || restoreMode" style="margin-top: -18px">
-            <div class="status-tag" [ngClass]="objTask.checked ? 'complete' : 'incomplete'">
+          <div *ngIf="editMode || restoreMode" style="margin-top: -15px">
+            <div class="status-tag no-select" [ngClass]="todoForm.value.status ? 'complete' : 'incomplete'" (click)="toggleStatus()">
               <!-- <span class="todo-item-label" style="font-size: 14px; margin-top: 2px; margin-right: 8px;">Status</span> -->
               <span *ngIf="todoForm.value.status" class="todo-item-label status-label">
-                Complete
+                Completed
                 <mat-icon class="chip-icon">check</mat-icon>
               </span>
               <span *ngIf="!todoForm.value.status" class="todo-item-label status-label">

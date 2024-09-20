@@ -206,12 +206,22 @@ textarea {
 
 .status-tag {
   cursor: pointer;
-  padding: 6px 12px !important;
+  padding: 4px 12px !important;
   background: #f1f1f1;
   color: #000;
   border-radius: 25px !important;
   border-color: transparent;
   font-family: "Inter";
+  &.complete {
+    background-color: #e6f1e9;
+    color: #437c48;
+    border: 1px solid #437c48;
+  }
+  &.incomplete {
+    background-color: #f4e2e5;
+    color: #a84c47;
+    border: 1px solid #a84c47;
+  }
 }
 
 .status-label {
@@ -225,16 +235,8 @@ textarea {
     font-size: 18px;
     height: 18px;
     width: 18px;
+    color: inherit !important;
   }
-}
-
-.complete {
-  background-color: #e6f1e9;
-  color: #437c48;
-}
-.incomplete {
-  background-color: #f4e2e5;
-  color: #a84c47;
 }
 
 .schedule {

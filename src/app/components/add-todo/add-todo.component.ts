@@ -79,24 +79,26 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     })
     const theme = localStorage.getItem('DarkMode');
     this.darkMode = JSON.parse(theme);
-    const tags = JSON.parse(localStorage.getItem('tags') as string);
-    if (tags != null){
-      this.tags = structuredClone(tags) // deep copy of tags from localStorage
-    }
+    // JSON.parse(localStorage.getItem('tags') as string);
+    // const tags = [];
+    this.getTagsFromFireStore();
+    // if (tags != null){
+    //   this.tags = structuredClone(tags) // deep copy of tags from localStorage
+    // }
     if(this.restoreMode) {
       this.headerLabel = 'Restore task from archives 📂';
       this.headerDesc = 'Give life back to a task from the past!';
       this.btnLabel = 'Restore Task';
       this.objTask.archived = false;
       this.selectedTags = structuredClone(this.objTask.tags);
-      this.getSelectedTags();
+      // this.getSelectedTags();
       this.patchFormData();
     } else if (this.editMode) {
       this.headerLabel = 'Edit your task 🖊️';
       this.headerDesc = 'Make it even better! Update the details of your task.';
       this.btnLabel = 'Save Changes';
       this.selectedTags = structuredClone(this.objTask.tags);
-      this.getSelectedTags();
+      // this.getSelectedTags();
       this.patchFormData();
     } else {
       this.headerLabel = 'What tasks we got today? 🤔';
@@ -107,15 +109,39 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     this.calculateDate();
   }
 
-  getSelectedTags() {
-    if(this.selectedTags == undefined){
-      this.selectedTags = [];
-    }
-    if(this.selectedTags.length !== 0){
-      this.tags.forEach(localTag => {
-        localTag.isSelected = this.selectedTags.some(selectedTag => selectedTag.name === localTag.name);
-      });
-    }
+  getTagsFromFireStore() {
+    this.notification.showLoader(true);
+    this.tagService.getTags().subscribe({
+      next: (tags) => {
+        console.log('Tags Data fetched from FireStore: ', tags);
+        this.tags = tags;
+        this.notification.showLoader(false);
+      },
+      error: (error) => {
+        console.error('Error fetching tags:', error)
+        this.notification.showLoader(false);
+      }
+    });
+  }
+
+  toggleStatus() {
+    let status = this.todoForm.get('status').value;
+    status = !status;
+    this.todoForm.get('status').patchValue(status);
+  }
+
+  // getSelectedTags() {
+  //   if(this.selectedTags == undefined){
+  //     this.selectedTags = [];
+  //   }
+  //   if(this.selectedTags.length !== 0){
+  //     this.tags.forEach(localTag => {
+  //       localTag.isSelected = this.selectedTags.some(selectedTag => selectedTag.name === localTag.name);
+  //     });
+  //   }
+  // }
+  isTagSelected(tagId: string): boolean {
+    return this.selectedTags.some(selectedTag => selectedTag.id === tagId);
   }
 
   patchFormData() {
@@ -229,6 +255,9 @@ export class AddTodoComponent implements OnInit, OnDestroy {
           localStorage.setItem('tags', JSON.stringify(tags));
 
           // update tasks lists with deleted tag
+          this.tagService.delete(tag.id).then(
+            res => console.log("delete tag", res)
+          );
           const tasks = JSON.parse(localStorage.getItem('tasks'));
           if(tasks){
             tasks.forEach(task => {
@@ -241,7 +270,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
             })
             // console.log(tasks);
             localStorage.setItem('tasks', JSON.stringify(tasks));
-            this.todoService.loadTasksFromLocalStorage();
+            // this.todoService.loadTasksFromLocalStorage();
             // this.todoService.updateStatusArrays();
             this.todoService.sendClickEvent();
           }
@@ -266,7 +295,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       this.tagInput = false;
       event.chipInput?.clear();
       this.tagService.create(tag).then(res => {
-        console.log('Created new tag successfully!', res.data());
+        console.log('Created new tag successfully!', res);
       });
       localStorage.setItem('tags', JSON.stringify(this.tags));
     }
@@ -368,7 +397,7 @@ export class AddTodoComponent implements OnInit, OnDestroy {
       }
       if(this.validateTask(todo)){
         this.disabled = true;
-        this.todoService.addTask(todo);
+        // this.todoService.addTask(todo);
         this.todoService.create(todo).then(() => {
           console.log('Created new item successfully!');
         });
@@ -381,14 +410,14 @@ export class AddTodoComponent implements OnInit, OnDestroy {
         name: this.todoForm.value.name,
         note: this.todoForm.value.note,
         emoji: emoji,
-        checked: this.objTask.checked,
+        checked: this.todoForm.value.status,
         archived: this.objTask.archived,
         dateCreated: this.calculateDate(),
         type: this.taskType
       }
       if(this.validateTask(todo)){
         this.disabled = true;
-        this.todoService.updateTask(todo);
+        // this.todoService.updateTask(todo);
         this.todoService.update(todo.id, todo).then(() => {
           console.log('Created new item successfully!');
         });
@@ -397,16 +426,16 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     }
   }
 
-  // undoDelete() {
-  //   if (this.deletedTask) {
-  //     this.todoService.restoreTask(this.deletedTask);
-  //     this.deletedTask = null;
-  //     this.snackBar.open('The task was restored 🔄️', 'OK', {
-  //       duration: 2000,
-  //       verticalPosition: 'top'
-  //     });
-  //   }
-  // }
+  undoDelete() {
+    if (this.deletedTask) {
+      this.todoService.restoreTask(this.deletedTask);
+      this.deletedTask = null;
+      this.snackBar.open('The task was restored 🔄️', 'OK', {
+        duration: 2000,
+        verticalPosition: 'top'
+      });
+    }
+  }
 
   onDelete() {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent,{
@@ -424,7 +453,8 @@ export class AddTodoComponent implements OnInit, OnDestroy {
     confirmDialog.afterClosed().subscribe(result => {
       if(result === true) {
         this.deletedTask = this.objTask;
-        this.todoService.deleteTasks(this.objTask);
+        // this.todoService.deleteTasks(this.objTask);
+        this.todoService.delete(this.objTask.id);
         this.bottomSheet.dismiss(true);
         let snackBarRef = this.snackBar.open('The task was deleted 🗑️', '✖', {
           duration: 2000,

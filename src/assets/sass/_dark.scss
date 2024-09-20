@@ -150,6 +150,23 @@ body.dark-mode {
     color: #7b7b7b;
   }
 
+  .count-badge {
+    background: #252525;
+  }
+
+  .status-tag {
+    &.complete {
+      background-color: #043512;
+      color: #437c48;
+      border: 1px solid #437c48;
+    }
+    &.incomplete {
+      background-color: #450e17;
+      color: #a84c47;
+      border: 1px solid #a84c47;
+    }
+  }
+
   // checkbox
   .checkmark {
     border: 2px #0E0E11 solid;

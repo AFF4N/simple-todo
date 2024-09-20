@@ -60,6 +60,38 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
+    let date = new Date();
+    date.setHours(0, 0, 0, 0);
+    this.incompleteTasks = this.incompleteTasks.filter((task) => new Date(task.dateCreated) >= new Date(date));
+    this.completedTasks = this.completedTasks.filter((task) => new Date(task.dateCreated) >= new Date(date));
+
+    if(this.isDarkMode == true){
+      this.todoService.toggleDarkMode(true);
+    }
+    this.collapseFutureTsks = JSON.parse(localStorage.getItem('collapseFutureTsks') as string);
+    this.collapseCompletedTsks = JSON.parse(localStorage.getItem('collapseCompletedTsks') as string);
+    this.getTasksFromFireStore();
+    this.fetchSubscriptionData();
+  }
+
+  getTasksFromFireStore() {
+    this.notification.showLoader(true);
+    this.todoService.getTodos().subscribe({
+      next: (tasks) => {
+        console.log('Data fetched from FireStore: ', tasks);
+        this.allTasks = tasks;
+        this.getlocalTags();
+        this.getSelectedTag();
+        this.notification.showLoader(false);
+      },
+      error: (error) => {
+        console.error('Error fetching tasks by tag:', error)
+        this.notification.showLoader(false);
+      }
+    });
+  }
+
+  fetchSubscriptionData() {
     this.todoService.allTasksSubject
     .pipe(distinctUntilChanged((prev, curr) => {
       return JSON.stringify(prev) === JSON.stringify(curr);
@@ -85,35 +117,6 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
     .subscribe((futureTasks: any[]) => {
       this.futureTasks = futureTasks;
       this.sortFutureTasks();
-    });
-
-    let date = new Date();
-    date.setHours(0, 0, 0, 0);
-    this.incompleteTasks = this.incompleteTasks.filter((
-      task) => new Date(task.dateCreated) >= new Date(date));
-    this.completedTasks = this.completedTasks.filter((
-      task) => new Date(task.dateCreated) >= new Date(date));
-
-    if(this.isDarkMode == true){
-      this.todoService.toggleDarkMode(true);
-    }
-    this.collapseFutureTsks = JSON.parse(localStorage.getItem('collapseFutureTsks') as string);
-    this.collapseCompletedTsks = JSON.parse(localStorage.getItem('collapseCompletedTsks') as string);
-
-    this.notification.showLoader(true);
-    this.todoService.getTodos().subscribe({
-      next: (tasks) => {
-        console.log('Data fetched from FireStore: ', tasks);
-        this.allTasks = tasks;
-        this.todoService.loadTasksFromLocalStorage(this.allTasks)
-        this.getlocalTags();
-        this.getSelectedTag();
-        this.notification.showLoader(false);
-      },
-      error: (error) => {
-        console.error('Error fetching tasks by tag:', error)
-        this.notification.showLoader(false);
-      }
     });
 
     this.todoService.getClickEvent().subscribe(()=>{
@@ -159,33 +162,42 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
 
   AddNewTask(){
     const bottomSheetRef = this.bottomSheet.open(AddTodoComponent);
-    bottomSheetRef.afterDismissed().subscribe((refresh) => {
-      if(refresh){
-        // this.scrollToStart();
-        // this.selectedTagIndex = -1;
-        // let selectedTag = this.filterTags[this.selectedTagIndex];
-        // if(this.selectedTagIndex == -1){
-        //   selectedTag = {name: 'All'}
-        // }
-        // const tasksList = this.findTasksWithTag(JSON.parse(localStorage.getItem('tasks')), selectedTag);
-        // this.todoService.loadTasksFromLocalStorage(tasksList);
-        this.getlocalTags(1);
-      }
-    });
+    // bottomSheetRef.afterDismissed().subscribe((refresh) => {
+    //   if(refresh){
+    //     this.scrollToStart();
+    //     this.selectedTagIndex = -1;
+    //     let selectedTag = this.filterTags[this.selectedTagIndex];
+    //     if(this.selectedTagIndex == -1){
+    //       selectedTag = {name: 'All'}
+    //     }
+    //     // const tasksList = this.findTasksWithTag(JSON.parse(localStorage.getItem('tasks')), selectedTag);
+    //     // this.todoService.loadTasksFromLocalStorage(tasksList);
+    //     let request = { id: selectedTag.id, name: selectedTag.name }
+    //     this.todoService.getTasksByTag(request).subscribe({
+    //       next: (tasks) => {
+    //         this.allTasks = tasks
+    //         this.todoService.renderAppData(this.allTasks); // send the queried tasks
+    //       },
+    //       error: (error) => console.error('Error fetching tasks by tag:', error)
+    //     });
+    //     this.getlocalTags(1);
+    //   }
+    // });
   }
 
   editTask(task: any) {
     // console.log(task)
     const bottomSheetRef = this.bottomSheet.open(AddTodoComponent, { data: {editMode: true, task} });
-    bottomSheetRef.afterDismissed().subscribe((refresh) => {
-      if(refresh){
-        // this.scrollToStart();
-        // this.selectedTagIndex = -1;
-        this.allTasks = JSON.parse(localStorage.getItem('tasks'));
-        this.getSelectedTag();
-        this.getlocalTags();
-      }
-    });
+    // bottomSheetRef.afterDismissed().subscribe((refresh) => {
+    //   if(refresh){
+    //     this.scrollToStart();
+    //     this.selectedTagIndex = -1;
+    //     // this.allTasks = JSON.parse(localStorage.getItem('tasks'));
+    //     this.getTasksFromFireStore();
+    //     this.getSelectedTag();
+    //     this.getlocalTags();
+    //   }
+    // });
   }
 
   openArchives() {
@@ -208,7 +220,7 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   select($event: { emoji: any }, task: Task) {
     task.emoji = $event.emoji;
     this.disableAnimations = true;
-    this.todoService.updateTask(task);
+    this.todoService.update(task.id, task);
     setTimeout(() => {
       this.disableAnimations = false;
     }, 100);
@@ -352,11 +364,11 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       // this.scrollToStart();
       // this.selectedTagIndex = -1;
       // this.todoService.loadTasksFromLocalStorage();
-      this.todoService.deleteTasks(task);
+      // this.todoService.deleteTasks(task);
       this.todoService.delete(task.id);
       this.allTasks = JSON.parse(localStorage.getItem('tasks'));
       this.getlocalTags();
-      this.getSelectedTag();
+      // this.getSelectedTag();
       setTimeout(() => {
         this.disableAnimations = false;
       }, 100);
@@ -368,7 +380,7 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       snackBarRef.onAction().subscribe(() => {
         this.undoDelete();
         this.getlocalTags();
-        this.getSelectedTag();
+        // this.getSelectedTag();
       });
 
     }
@@ -408,23 +420,25 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
 
   getSelectedTag(){
     const tagIndex = JSON.parse(localStorage.getItem('selectedTag') as string);
-    if(tagIndex !== null){
+    if(tagIndex){
       this.selectedTagIndex = tagIndex;
       var selectedTag = this.filterTags[tagIndex];
       if(selectedTag == undefined){
         this.selectedTagIndex = -1;
         selectedTag = {name: 'All'}
-        localStorage.setItem('selectedTag', this.selectedTagIndex.toString())
+        localStorage.setItem('selectedTag', this.selectedTagIndex.toString());
+        this.todoService.renderAppData(this.allTasks);
+      } else {
+        let request = { id: selectedTag.id, name: selectedTag.name }
+        this.todoService.getTasksByTag(request).subscribe({
+          next: (tasks) => {
+            this.todoService.renderAppData(tasks); // send the queried tasks
+          },
+          error: (error) => console.error('Error fetching tasks by tag:', error)
+        });
       }
       // const tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
       // this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
-      let request = { name: selectedTag.name }
-      this.todoService.getTasksByTag(request).subscribe({
-        next: (tasks) => {
-          this.todoService.loadTasksFromLocalStorage(tasks); // send the queried tasks
-        },
-        error: (error) => console.error('Error fetching tasks by tag:', error)
-      });
       setTimeout(() => {
         let el = document.getElementById(selectedTag.name)
         el.scrollIntoView({behavior: "smooth",block: "start",inline: "center"});
@@ -436,35 +450,45 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
   }
 
   getlocalTags(flag?) {
-    // this.tagService.getTags().subscribe(data => {
-    //   console.log('Tags Data fetched from FireStore: ', data);
-    //   tags = data
-    //   this.notification.showLoader(false);
-    // });
-
     let tasks = [];
     let tagCounts = {};
-    if(flag) {
+
+    // Retrieve tasks either from local storage or from `allTasks`
+    if (flag) {
       tasks = JSON.parse(localStorage.getItem('tasks'));
     } else {
       tasks = this.allTasks;
     }
-    // const taskLists = JSON.parse(localStorage.getItem('tasks'));
+
+    // Iterate over tasks to collect tags and count their occurrences
     tasks.forEach(task => {
-      task.tags.forEach(tag => {
+      task.tags.forEach((tag: any) => {
         if (!task.archived) {
-          tagCounts[tag.name] = (tagCounts[tag.name] || 0) + 1;
+          const tagKey = tag.id; // Use tag.id as the key for uniqueness
+          if (!tagCounts[tagKey]) {
+            tagCounts[tagKey] = {
+              id: tag.id, // Store the tag's ID
+              name: tag.name, // Store the tag's name
+              count: 0
+            };
+          }
+          tagCounts[tagKey].count++;
         }
       });
     });
 
+    // Convert tagCounts object into an array
     let tags = [];
-    for (let tagName in tagCounts) {
-      tags.push({ name: tagName, count: tagCounts[tagName] });
+    for (let tagKey in tagCounts) {
+      tags.push({
+        id: tagCounts[tagKey].id,   // Include ID
+        name: tagCounts[tagKey].name, // Include name
+        count: tagCounts[tagKey].count // Include count
+      });
     }
 
-    this.filterTags = tags.sort(
-      function (a, b) {
+    // Sort tags alphabetically by name
+    this.filterTags = tags.sort((a, b) => {
       if (a.name < b.name) {
         return -1;
       }
@@ -473,8 +497,10 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       }
       return 0;
     });
-    console.log('filterTags',this.filterTags);
+
+    console.log('filterTags', this.filterTags);
   }
+
 
   onSelectTags(index){
     if(this.selectedTagIndex === index) return;
@@ -487,25 +513,25 @@ export class TodoListComponent implements OnInit, AfterViewChecked {
       selectedTag = {name: 'All'}
       this.todoService.getTodos().subscribe(data => {
         console.log('Data fetched from FireStore: ', data);
-        this.todoService.loadTasksFromLocalStorage(data)
+        this.todoService.renderAppData(data)
         this.notification.showLoader(false);
       });
     } else {
       // tasksList = this.findTasksWithTag(this.allTasks, selectedTag);
-      let request = { name: selectedTag.name }
+        let request = { id: selectedTag.id, name: selectedTag.name }
       this.todoService.getTasksByTag(request).subscribe({
         next: (tasks) => {
           tasksList = tasks
-          this.todoService.loadTasksFromLocalStorage(tasksList); // send the queried tasks
+          this.todoService.renderAppData(tasksList); // send the queried tasks
         },
         error: (error) => console.error('Error fetching tasks by tag:', error)
       });
     }
   }
 
-  findTasksWithTag(tasks, targetTag) {
-    return tasks.filter(task => task.tags.some(tag => tag.name === targetTag.name));
-  }
+  // findTasksWithTag(tasks, targetTag) {
+  //   return tasks.filter(task => task.tags.some(tag => tag.name === targetTag.name));
+  // }
 
   scrollToStart() {
     this.carousel?.nativeElement.scrollTo({ left: 0, behavior: 'smooth' });
